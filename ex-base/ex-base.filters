@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{45357a7f-b197-4c3f-91f1-8e2c258d3468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{ae64fa5c-ce1a-42b2-a0db-ef05f5fa4eb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Overlay">
+      <UniqueIdentifier>{591e4213-7965-4291-89d4-6433d93221b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="memory.hh">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="offsets.hh">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="color.hh">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="overlay.hh">
+      <Filter>Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="render.hh">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.hh">
+      <Filter>Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="vector.cc">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="memory.cc">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="overlay.cc">
+      <Filter>Overlay</Filter>
+    </ClCompile>
+    <ClCompile Include="render.cc">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="offsets.cc">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ex base.cc">
+      <Filter>Main</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

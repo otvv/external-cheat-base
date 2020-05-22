@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ex-client</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\button.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\checkbox.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\colorlist.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\form.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\groupbox.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\keybinder.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\label.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\listbox.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\multibox.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\slider.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\tabs.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\textbox.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\widgets.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="overlay.hpp">
+      <Filter>ex-client\overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="render.hpp">
+      <Filter>ex-client\render</Filter>
+    </ClInclude>
+    <ClInclude Include="ring0.hpp">
+      <Filter>ex-client\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="ring3.hpp">
+      <Filter>ex-client\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\FGUI.hpp">
+      <Filter>ex-client\FGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\dependencies\aliases.hpp">
+      <Filter>ex-client\FGUI\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\dependencies\builder.hpp">
+      <Filter>ex-client\FGUI\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\dependencies\definitions.hpp">
+      <Filter>ex-client\FGUI\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\button.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\checkbox.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\colorlist.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\form.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\groupbox.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\keybinder.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\label.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\listbox.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\multibox.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\slider.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\tabs.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\textbox.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\widgets.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="input.hpp">
+      <Filter>ex-client\input</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.hpp">
+      <Filter>ex-client\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\dependencies\helpers.hpp">
+      <Filter>ex-client\FGUI\dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities.hpp">
+      <Filter>ex-client\utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers.hpp">
+      <Filter>ex-client\utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ex-client">
+      <UniqueIdentifier>{6cfe7d08-b0db-47cf-85d4-c5035cf6fd1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\overlay">
+      <UniqueIdentifier>{bf4b719e-0a71-4118-ad5e-36ecf29d78bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\memory">
+      <UniqueIdentifier>{2eceaca8-b03d-4484-a189-cb32d26b2240}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\render">
+      <UniqueIdentifier>{1cbdd377-48a2-487e-8618-96e0b849df1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI">
+      <UniqueIdentifier>{e4362d07-76e9-4b20-8877-c34f7605b415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI\widgets">
+      <UniqueIdentifier>{c962e831-c528-4779-8971-4e9759050e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI\dependencies">
+      <UniqueIdentifier>{e35d7b12-27fb-4008-a455-88160dd817eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\input">
+      <UniqueIdentifier>{bd639602-a15c-4e65-9be5-472693aec1ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\menu">
+      <UniqueIdentifier>{64bd0d4b-9f98-44ec-8a4e-35a578be5f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\utilities">
+      <UniqueIdentifier>{41ff9744-c6b6-4d87-86c2-e103d206966e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

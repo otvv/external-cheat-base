@@ -1,0 +1,87 @@
+;
+; ex-driver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=USBDevice ; TODO: change this
+ClassGuid={88BAE032-5A81-49f0-BC3D-A4FF138216D6} ; TODO: edit class guid
+Provider=%ManufacturerName%
+CatalogFile=ex-driver.cat
+DriverVer=0.0.1
+
+[DestinationDirs]
+DefaultDestDir = 12
+ex-driver_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+ex-driver.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ex-driver.DeviceDesc%=ex-driver_Device, USB\VID_vvvv&PID_pppp
+
+[ex-driver_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+ex-driver.sys
+
+[ex-driver_Device.NT.HW]
+AddReg=ex-driver_AddReg
+
+[ex-driver_AddReg]
+; By default, USBDevice class uses iProduct descriptor to name the device in
+; Device Manager on Windows 8 and higher.
+; Uncomment for this device to use %DeviceName% on Windows 8 and higher:
+;HKR,,FriendlyName,,%ex-driver.DeviceDesc%
+
+;-------------- Service installation
+[ex-driver_Device.NT.Services]
+AddService = ex-driver,%SPSVCINST_ASSOCSERVICE%, ex-driver_Service_Inst
+
+; -------------- ex-driver driver install sections
+[ex-driver_Service_Inst]
+DisplayName    = %ex-driver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\ex-driver.sys
+
+;
+;--- ex-driver_Device Coinstaller installation ------
+;
+
+[ex-driver_Device.NT.CoInstallers]
+AddReg=ex-driver_Device_CoInstaller_AddReg
+CopyFiles=ex-driver_Device_CoInstaller_CopyFiles
+
+[ex-driver_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ex-driver_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[ex-driver_Device.NT.Wdf]
+KmdfService =  ex-driver, ex-driver_wdfsect
+[ex-driver_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="USBDevice"
+DiskName = "ex-driver Installation Disk"
+ex-driver.DeviceDesc = "ex-driver Device"
+ex-driver.SVCDESC = "ex-driver Service"
+REG_MULTI_SZ = 0x00010000
