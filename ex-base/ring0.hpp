@@ -4,5 +4,3 @@
 //
 
 #pragma once
-
-#include "xorstr.hpp"

@@ -43,6 +43,12 @@
     <ClCompile Include="FGUI\widgets\widgets.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="FGUI\dependencies\external\tinyxml2.cpp">
+      <Filter>ex-client\FGUI\dependencies\external</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\colorpicker.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="overlay.hpp">
@@ -123,6 +129,12 @@
     <ClInclude Include="helpers.hpp">
       <Filter>ex-client\utilities</Filter>
     </ClInclude>
+    <ClInclude Include="FGUI\dependencies\external\tinyxml2.hpp">
+      <Filter>ex-client\FGUI\dependencies\external</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\colorpicker.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ex-client">
@@ -154,6 +166,9 @@
     </Filter>
     <Filter Include="ex-client\utilities">
       <UniqueIdentifier>{41ff9744-c6b6-4d87-86c2-e103d206966e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI\dependencies\external">
+      <UniqueIdentifier>{d2f44e33-a45e-4a46-b70f-1b0c3321029b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

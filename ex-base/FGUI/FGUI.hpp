@@ -30,6 +30,7 @@
 #include "widgets/button.hpp"
 #include "widgets/checkbox.hpp"
 #include "widgets/colorlist.hpp"
+#include "widgets/colorpicker.hpp"
 #include "widgets/form.hpp"
 #include "widgets/groupbox.hpp"
 #include "widgets/keybinder.hpp"

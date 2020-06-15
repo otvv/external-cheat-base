@@ -38,27 +38,27 @@ namespace INPUT_SYSTEM
     ptLastKnownPosition = m_ptCursorPosition;
   }
 
-  inline bool GetKeyState(int _key_code)
+  inline bool GetKeyState(unsigned int _key_code)
   {
     return m_prgpCurrentPressedKeys.at(_key_code);
   }
 
-  inline bool GetKeyRelease(int _key_code)
+  inline bool GetKeyRelease(unsigned int _key_code)
   {
     return (!m_prgpCurrentPressedKeys.at(_key_code) && m_prgpOldPressedKeys.at(_key_code));
   }
 
-  inline bool GetKeyPress(int _key_code)
+  inline bool GetKeyPress(unsigned int _key_code)
   {
     return (m_prgpCurrentPressedKeys.at(_key_code) && !m_prgpOldPressedKeys.at(_key_code));
   }
 
-  inline const FGUI::POINT& GetCursorPos()
+  inline FGUI::POINT GetCursorPos()
   {
     return m_ptCursorPosition;
   }
 
-  inline const FGUI::POINT& GetCursorPosDelta()
+  inline FGUI::POINT GetCursorPosDelta()
   {
     return m_ptCursorPositionDelta;
   }
@@ -68,7 +68,7 @@ namespace INPUT_SYSTEM
     return m_iCursorWheelDelta;
   }
 
-  inline bool IsCursorInArea(const FGUI::AREA& area)
+  inline bool IsCursorInArea(FGUI::AREA area)
   {
     return (GetCursorPos().m_iX > area.m_iLeft && GetCursorPos().m_iY > area.m_iTop &&
       GetCursorPos().m_iX < area.m_iLeft + area.m_iRight && GetCursorPos().m_iY < area.m_iTop + area.m_iBottom);

@@ -11,32 +11,32 @@
 namespace FGUI
 {
 
-class CKeyBinder : public FGUI::CWidgets
-{
-public:
-  CKeyBinder();
+  class CKeyBinder : public FGUI::CWidgets
+  {
+  public:
+    CKeyBinder();
 
-  // @brief: set a custom key for the keybinder
-  // @params: int key = custom key code
-  void SetKey(int key);
+    // @brief: set a custom key for the keybinder
+    // @params: unsigned int key = custom key code
+    void SetKey(unsigned int key_code);
 
-  // @brief: get the current key set on the keybinder
-  int GetKey();
+    // @brief: get the current key set on the keybinder
+    unsigned int GetKey();
 
-  // @brief: populate widget geometry (draw widget)
-  void Geometry() override;
+    // @brief: populate widget geometry (draw widget)
+    void Geometry() override;
 
-  // @brief: handle update operations on the widget
-  void Update() override;
+    // @brief: handle update operations on the widget
+    void Update() override;
 
-  // @brief: handle input inside the widget
-  void Input() override;
-private:
- int m_nKey;
- std::string m_strStatus;
- bool m_bIsGettingKey;
- FGUI::KEY_CODES m_kcCodes;
-};
+    // @brief: handle input inside the widget
+    void Input() override;
+  private:
+    unsigned int m_uiKey;
+    std::string m_strStatus;
+    bool m_bIsGettingKey;
+    FGUI::KEY_CODES m_kcCodes;
+  };
 
 } // namespace FGUI
 

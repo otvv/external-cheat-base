@@ -14,26 +14,26 @@
 namespace FGUI
 {
 
-class CButton : public FGUI::CWidgets
-{
-public:
-  CButton();
+  class CButton : public FGUI::CWidgets
+  {
+  public:
+    CButton();
 
-  // @brief: adds a function callback for the button (it will call the function whenever the user clicks the button)
-  // @params: std::function<void()> callback = function instance
-  void AddCallback(const std::function<void()> &callback);
+    // @brief: adds a function callback for the button (it will call the function whenever the user clicks the button)
+    // @params: std::function<void()> callback = function instance
+    void AddCallback(std::function<void()> callback);
 
-  // @brief: populate widget geometry (draw widget)
-  void Geometry() override;
+    // @brief: populate widget geometry (draw widget)
+    void Geometry() override;
 
-  // @brief: handle update operations on the widget
-  void Update() override;
+    // @brief: handle update operations on the widget
+    void Update() override;
 
-  // @brief: handle input inside the widget
-  void Input() override;
-private:
- std::function<void()> m_fnctCallback;
-};
+    // @brief: handle input inside the widget
+    void Input() override;
+  private:
+    std::function<void()> m_fnctCallback;
+  };
 
 } // namespace FGUI
 
