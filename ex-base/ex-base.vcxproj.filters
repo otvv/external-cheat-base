@@ -28,9 +28,6 @@
     <ClCompile Include="FGUI\widgets\listbox.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="FGUI\widgets\multibox.cpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="FGUI\widgets\slider.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
@@ -47,6 +44,12 @@
       <Filter>ex-client\FGUI\dependencies\external</Filter>
     </ClCompile>
     <ClCompile Include="FGUI\widgets\colorpicker.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\combobox.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\multibox.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
   </ItemGroup>
@@ -99,9 +102,6 @@
     <ClInclude Include="FGUI\widgets\listbox.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="FGUI\widgets\multibox.hpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClInclude>
     <ClInclude Include="FGUI\widgets\slider.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
@@ -133,6 +133,12 @@
       <Filter>ex-client\FGUI\dependencies\external</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\widgets\colorpicker.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\combobox.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\multibox.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
   </ItemGroup>

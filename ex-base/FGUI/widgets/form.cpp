@@ -5,6 +5,18 @@
 // library includes
 #include "form.hpp"
 #include "groupbox.hpp"
+#include "checkbox.hpp"
+#include "colorlist.hpp"
+#include "colorpicker.hpp"
+#include "combobox.hpp"
+#include "keybinder.hpp"
+#include "listbox.hpp"
+#include "multibox.hpp"
+#include "slider.hpp"
+#include "textbox.hpp"
+
+// external includes
+#include "../dependencies/external/tinyxml2.hpp"
 
 namespace FGUI
 {
@@ -206,6 +218,165 @@ namespace FGUI
     return m_dmSize;
   }
 
+  void CForm::SaveState(std::string file_name)
+  {
+    tinyxml2::XMLDocument xmlDocument;
+
+    // create the root element
+    tinyxml2::XMLElement* xmlRootElement = xmlDocument.NewElement("FGUI");
+    xmlDocument.LinkEndChild(xmlRootElement);
+
+    if (xmlRootElement)
+    {
+      // check if the form has tabs
+      if (m_prgpTabs.empty())
+      {
+        return;
+      }
+
+      for (const std::shared_ptr<FGUI::CTabs>& tabs : m_prgpTabs)
+      {
+        // create a new child section for tabs
+        tinyxml2::XMLElement* xmlTabChildElement = xmlDocument.NewElement(tabs->GetTitle().c_str());
+        xmlRootElement->LinkEndChild(xmlTabChildElement);
+
+        if (xmlTabChildElement)
+        {
+          // check if the tab has any widgets
+          if (tabs->m_prgpWidgets.empty())
+          {
+            return;
+          }
+
+          for (const std::shared_ptr<FGUI::CWidgets>& widgets : tabs->m_prgpWidgets)
+          {
+            // check if the widget can be saved first
+            if (widgets && widgets->GetFlags(FGUI::WIDGET_FLAG::SAVABLE))
+            {
+              // create a new child section for each widget
+              tinyxml2::XMLElement* xmlWidgetChildElement = xmlDocument.NewElement(widgets->GetIdentificator().c_str());
+              xmlTabChildElement->LinkEndChild(xmlWidgetChildElement);
+
+              if (xmlWidgetChildElement)
+              {
+                // create temporary instances of each savable widget
+                std::shared_ptr<FGUI::CCheckBox> pTemporaryCheckBox = nullptr;
+                std::shared_ptr<FGUI::CColorList> pTemporaryColorList = nullptr;
+                std::shared_ptr<FGUI::CColorPicker> pTemporaryColorPicker = nullptr;
+                std::shared_ptr<FGUI::CComboBox> pTemporaryComboBox = nullptr;
+                std::shared_ptr<FGUI::CKeyBinder> pTemporaryKeyBinder = nullptr;
+                std::shared_ptr<FGUI::CListBox> pTemporaryListBox = nullptr;
+                std::shared_ptr<FGUI::CMultiBox> pTemporaryMultiBox = nullptr;
+                std::shared_ptr<FGUI::CSlider> pTemporarySlider = nullptr;
+                std::shared_ptr<FGUI::CTextBox> pTemporaryTextBox = nullptr;
+
+                // save data according to the available widget
+                switch (widgets->GetType())
+                {
+                  case static_cast<int>(FGUI::WIDGET_TYPE::CHECKBOX) :
+                  {
+                    pTemporaryCheckBox = std::reinterpret_pointer_cast<FGUI::CCheckBox>(widgets);
+                    xmlWidgetChildElement->SetText(pTemporaryCheckBox->GetState());
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::COLORLIST) :
+                  {
+                    pTemporaryColorList = std::reinterpret_pointer_cast<FGUI::CColorList>(widgets);
+
+                    for (FGUI::COLOR_INFO info : pTemporaryColorList->GetColorInfo())
+                    {
+                      // create a new child section for each color
+                      tinyxml2::XMLElement* xmlColorEntryElement = xmlDocument.NewElement(info.m_strIdentificator.c_str());
+                      xmlWidgetChildElement->LinkEndChild(xmlColorEntryElement);
+
+                      if (xmlColorEntryElement)
+                      {
+                        char cBuffer[32];
+                        std::sprintf(cBuffer, "%d, %d, %d, %d", info.m_clrFirst.m_ucRed, info.m_clrFirst.m_ucGreen, info.m_clrFirst.m_ucBlue, info.m_clrFirst.m_ucAlpha);
+                        xmlColorEntryElement->SetText(cBuffer);
+                      }
+                    }
+
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::COLORPICKER) :
+                  {
+                    pTemporaryColorPicker = std::reinterpret_pointer_cast<FGUI::CColorPicker>(widgets);
+
+                    char cBuffer[32];
+                    std::sprintf(cBuffer, "%d, %d, %d, %d", pTemporaryColorPicker->GetColor().m_ucRed, pTemporaryColorPicker->GetColor().m_ucGreen,
+                      pTemporaryColorPicker->GetColor().m_ucBlue, pTemporaryColorPicker->GetColor().m_ucAlpha);
+                    xmlWidgetChildElement->SetText(cBuffer);
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::COMBOBOX) :
+                  {
+                    pTemporaryComboBox = std::reinterpret_pointer_cast<FGUI::CComboBox>(widgets);
+                    xmlWidgetChildElement->SetText(pTemporaryComboBox->GetIndex());
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::KEYBINDER) :
+                  {
+                    pTemporaryKeyBinder = std::reinterpret_pointer_cast<FGUI::CKeyBinder>(widgets);
+                    xmlWidgetChildElement->SetText(pTemporaryKeyBinder->GetKey());
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::LISTBOX) :
+                  {
+                    pTemporaryListBox = std::reinterpret_pointer_cast<FGUI::CListBox>(widgets);
+                    xmlWidgetChildElement->SetText(pTemporaryListBox->GetIndex());
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::MULTIBOX) :
+                  {
+                    pTemporaryMultiBox = std::reinterpret_pointer_cast<FGUI::CMultiBox>(widgets);
+
+                    for (std::size_t i = 0; i < pTemporaryMultiBox->GetMultiEntryInfo().first.size(); i++)
+                    {
+                      // create a new child section for each entry
+                      tinyxml2::XMLElement* xmlMultiBoxEntryElement = xmlDocument.NewElement(pTemporaryMultiBox->GetMultiEntryInfo().first[i].c_str());
+                      xmlWidgetChildElement->LinkEndChild(xmlMultiBoxEntryElement);
+
+                      if (xmlMultiBoxEntryElement)
+                      {
+                        xmlMultiBoxEntryElement->SetText(pTemporaryMultiBox->GetMultiEntryInfo().second[i]);
+                      }
+                    }
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::SLIDER) :
+                  {
+                    pTemporarySlider = std::reinterpret_pointer_cast<FGUI::CSlider>(widgets);
+                    xmlWidgetChildElement->SetText(pTemporarySlider->GetValue());
+                    break;
+                  }
+                  case static_cast<int>(FGUI::WIDGET_TYPE::TEXTBOX) :
+                  {
+                    pTemporaryTextBox = std::reinterpret_pointer_cast<FGUI::CTextBox>(widgets);
+                    xmlWidgetChildElement->SetText(pTemporaryTextBox->GetText().c_str());
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // save state into a file
+
+    if (xmlDocument.SaveFile(file_name.c_str()) != tinyxml2::XML_SUCCESS)
+    {
+      return; // TODO: throw an exception here
+    }
+  }
+
+  void CForm::LoadState(std::string file_name)
+  {
+
+  }
+
   void CForm::Geometry()
   {
     // form body
@@ -234,7 +405,6 @@ namespace FGUI
     // tab buttons
     for (std::size_t i = 0; i < m_prgpTabs.size(); i++)
     {
-      // tab button area
       FGUI::AREA arTabRegion = { (m_ptPosition.m_iX + 10) + (static_cast<int>(i) * 113), (m_ptPosition.m_iY + 31) + 20, 110, 25 };
 
       if (FGUI::INPUT.IsCursorInArea(arTabRegion))
@@ -403,10 +573,8 @@ namespace FGUI
 
     if (FGUI::INPUT.GetKeyPress(MOUSE_1))
     {
-      // grab screen size
       FGUI::DIMENSION dmScreenSize = FGUI::RENDER.GetScreenSize();
 
-      // get "clickable" area (you can limit this to the form boundaries instead of using the entire screen.)
       FGUI::AREA arClickableRegion = { m_ptPosition.m_iX, m_ptPosition.m_iY, dmScreenSize.m_iWidth, dmScreenSize.m_iHeight };
 
       if (FGUI::INPUT.IsCursorInArea(arClickableRegion))
@@ -448,7 +616,6 @@ namespace FGUI
           // assign the widget that will be skipped
           pWidgetToSkip = m_pFocusedWidget;
 
-          // get focused widget area
           FGUI::AREA arFocusedWidgetRegion = { pWidgetToSkip->GetAbsolutePosition().m_iX, pWidgetToSkip->GetAbsolutePosition().m_iY, pWidgetToSkip->GetSize().m_iWidth, pWidgetToSkip->GetSize().m_iHeight };
 
           // update focused widget
@@ -493,7 +660,6 @@ namespace FGUI
           pFoundGroupBox = pWidgets->m_pParentGroupBox ? std::reinterpret_pointer_cast<FGUI::CGroupBox>(pWidgets->m_pParentGroupBox) : nullptr;
         }
 
-        // get the widget area
         FGUI::AREA arWidgetRegion = { pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight };
 
         if (pFoundGroupBox)
@@ -582,7 +748,6 @@ namespace FGUI
       return;
     }
 
-    // form draggable area
     FGUI::AREA arDraggableArea = { m_ptPosition.m_iX, m_ptPosition.m_iY, m_dmSize.m_iWidth, 30 };
 
     if (FGUI::INPUT.IsCursorInArea(arDraggableArea))
@@ -597,7 +762,6 @@ namespace FGUI
     // if the user started dragging the form
     if (m_bIsDragging)
     {
-      // get cursor position delta
       FGUI::POINT ptCursorPosDelta = FGUI::INPUT.GetCursorPosDelta();
 
       // move form

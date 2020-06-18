@@ -94,6 +94,13 @@ namespace FGUI
     // @brief: get the widget's default font
     FGUI::FONT GetFont();
 
+    // @brief: set the widget's identificator
+    // @args: std::string identificator = widget indentificator (widget variable on the config file)
+    void SetIdentificator(std::string identificator);
+
+    // @brief: get the current widget identificator (variable)
+    std::string GetIdentificator();
+
   protected:
 
     // @brief: populate widget geometry (draw widget)
@@ -112,6 +119,7 @@ namespace FGUI
     std::shared_ptr<FGUI::CForm> m_pParentForm;
     std::shared_ptr<FGUI::CWidgets> m_pParentGroupBox;
     std::shared_ptr<FGUI::CWidgets> m_pMedium;
+    std::string m_strIdentificator;
     std::string m_strTitle;
     FGUI::FONT m_ulFont;
     FGUI::DIMENSION m_dmSize;

@@ -18,7 +18,7 @@ namespace FGUI
     m_iInputPos = 0;
     m_bIsGettingKey = false;
     m_nType = static_cast<int>(WIDGET_TYPE::TEXTBOX);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CTextBox::SetText(std::string text)
@@ -38,10 +38,8 @@ namespace FGUI
 
   void CTextBox::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
     // textbox body
@@ -141,7 +139,6 @@ namespace FGUI
 
   void CTextBox::Input()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))

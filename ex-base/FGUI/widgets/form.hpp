@@ -13,9 +13,9 @@
 #include <vector>
 
 // library includes
+#include "tabs.hpp"
 #include "../dependencies/aliases.hpp"
 #include "../dependencies/definitions.hpp"
-#include "tabs.hpp"
 
 namespace FGUI
 {
@@ -111,6 +111,14 @@ namespace FGUI
 
     // @brief: get the form default size
     FGUI::DIMENSION GetSize();
+
+    // @brief: save the form state into a file (config)
+    // @args: std::string file = config name/location
+    void SaveState(std::string file_name);
+
+    // @brief: load form state from a file (config)
+    // @args: std::string file_name = config name/location
+    void LoadState(std::string file_name);
 
   protected:
     // @brief: populate form geometry (draw form)

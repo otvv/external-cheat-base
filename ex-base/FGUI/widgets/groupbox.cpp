@@ -55,10 +55,8 @@ namespace FGUI
 
   void CGroupBox::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
     // groupbox body
@@ -96,7 +94,6 @@ namespace FGUI
 
   void CGroupBox::Update()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     // check if the user is hovering the groupbox
@@ -118,7 +115,6 @@ namespace FGUI
           {
             static bool bIsDraggingThumb = false;
 
-            // scrollbar area
             FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, m_dmSize.m_iHeight };
 
             if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))

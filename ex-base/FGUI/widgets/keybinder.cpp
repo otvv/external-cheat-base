@@ -17,7 +17,7 @@ namespace FGUI
     m_strStatus = "None";
     m_bIsGettingKey = false;
     m_nType = static_cast<int>(WIDGET_TYPE::KEYBINDER);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CKeyBinder::SetKey(unsigned int key_code)
@@ -32,10 +32,8 @@ namespace FGUI
 
   void CKeyBinder::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
     // keybinder body
@@ -97,7 +95,6 @@ namespace FGUI
 
   void CKeyBinder::Input()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))

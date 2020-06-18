@@ -26,7 +26,7 @@ namespace FGUI
     m_bIsDragging = false;
     m_ulFont = 0;
     m_nType = static_cast<int>(WIDGET_TYPE::COLORLIST);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CColorList::AddColor(std::string identificator, FGUI::COLOR color, bool gradient)
@@ -80,10 +80,7 @@ namespace FGUI
     // color gap
     static constexpr int iColorPickerGap = 250;
 
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, (m_dmSize.m_iWidth - iColorPickerGap), m_dmSize.m_iHeight };
-
-    // scrollbar area
     FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, (arWidgetRegion.m_iTop + 20), 15, (m_dmSize.m_iHeight - 20) };
 
     // entries displayed
@@ -101,7 +98,6 @@ namespace FGUI
     // colorlist entries
     for (std::size_t i = m_iScrollThumbPosition; (i < m_prgpColorInfo.size()) && (iEntriesDisplayed < iCalculatedEntries); i++)
     {
-      // entry area
       FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop + (m_iEntrySpacing * iEntriesDisplayed) + 20, (arWidgetRegion.m_iRight - arScrollBarRegion.m_iRight), m_iEntrySpacing };
 
       // check if the user is hovers or selects something on the colorlist
@@ -110,7 +106,6 @@ namespace FGUI
         FGUI::RENDER.Rectangle((arEntryRegion.m_iLeft + 1), arEntryRegion.m_iTop, (arWidgetRegion.m_iRight - 2), arEntryRegion.m_iBottom, { 235, 235, 255 });
       }
 
-      // color button size
       static constexpr FGUI::DIMENSION dmColorButtonSize = { 20, 16 };
 
       // color button body
@@ -138,10 +133,8 @@ namespace FGUI
     // color picker size
     static constexpr FGUI::DIMENSION dmColorPickerSize = { 150, 150 };
 
-    // color picker's area
     FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + (m_dmSize.m_iWidth - iColorPickerGap) + 10), (GetAbsolutePosition().m_iY + 20), dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-    // color picker's pixelation (ghetto optimization)
     static constexpr int iPixelation = 3; // TODO: make a function for this
 
     // color picker body
@@ -191,10 +184,8 @@ namespace FGUI
     // plus sequence button
     //
 
-    // plus button area
     FGUI::AREA arPlusButtonRegion = { (GetAbsolutePosition().m_iX + 70), (GetAbsolutePosition().m_iY - 1), 16, 16 };
 
-    // plus button title text size
     FGUI::DIMENSION dmPlusButtonTextSize = FGUI::RENDER.GetTextSize(m_ulFont, "+");
 
     // plus button body
@@ -215,10 +206,8 @@ namespace FGUI
     // remove sequence button
     //
 
-    // minus button area
     FGUI::AREA arMinusButtonRegion = { (GetAbsolutePosition().m_iX + 90), (GetAbsolutePosition().m_iY - 1), 16, 16 };
 
-    // minus button title text size
     FGUI::DIMENSION dmMinusButtonTextSize = FGUI::RENDER.GetTextSize(m_ulFont, "-");
 
     // minus button body
@@ -239,7 +228,6 @@ namespace FGUI
     // gradient checkbox
     //
 
-    // checkbox area
     FGUI::AREA arCheckboxRegion = { (GetAbsolutePosition().m_iX + 115), (GetAbsolutePosition().m_iY - 1), 16, 16 };
 
     // checkbox body
@@ -273,10 +261,8 @@ namespace FGUI
     // slider picker size 
     static constexpr FGUI::DIMENSION dmSliderThumbSize = { 8, 6 };
 
-    // slider area
     FGUI::AREA arSliderRegion = { arColorPickerRegion.m_iLeft, (arColorPickerRegion.m_iTop + arColorPickerRegion.m_iBottom) + 40, arColorPickerRegion.m_iRight, 2 };
 
-    // slider title text size
     FGUI::DIMENSION dmSliderTextSize = FGUI::RENDER.GetTextSize(m_ulFont, "alpha");
 
     // slider body
@@ -303,7 +289,6 @@ namespace FGUI
       strCustomValue = std::to_string(static_cast<int>(flValueToPercentage)) + "%";
     }
 
-    // slider value text size
     FGUI::DIMENSION dmSliderValueTextSize = FGUI::RENDER.GetTextSize(m_ulFont, strCustomValue);
 
     // slider value
@@ -316,7 +301,6 @@ namespace FGUI
     // slider thumb
     FGUI::RENDER.Rectangle((arSliderRegion.m_iLeft + flLocation), (arSliderRegion.m_iTop - 2), dmSliderThumbSize.m_iWidth, dmSliderThumbSize.m_iHeight, { 180, 25, 25 });
 
-    // thumb properties
     static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = { 8, 5 };
 
     // calculate thumb position
@@ -359,7 +343,6 @@ namespace FGUI
       // calculate the amount of entries that will be drawn on the colorlist
       int iCalculatedEntries = ((m_dmSize.m_iHeight - 20) / m_iEntrySpacing);
 
-      // cursor position
       FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
       if (FGUI::INPUT.GetKeyState(MOUSE_1))
@@ -398,19 +381,14 @@ namespace FGUI
     // color gap
     static constexpr int iColorPickerGap = 250;
 
-    // color picker size
     static constexpr FGUI::DIMENSION dmColorPickerSize = { 150, 150 };
 
-    // color picker area
     FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + (m_dmSize.m_iWidth - iColorPickerGap) + 10), (GetAbsolutePosition().m_iY + 20), dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-    // color hsb area
     FGUI::AREA arColorHSBRegion = { arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom };
 
-    // color hue area
     FGUI::AREA arColorHueRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, arColorPickerRegion.m_iTop, 15, arColorPickerRegion.m_iBottom };
-
-    // alpha slider area
+    
     FGUI::AREA arAlphaSliderRegion = { arColorPickerRegion.m_iLeft, (arColorPickerRegion.m_iTop + arColorPickerRegion.m_iBottom) + 40, arColorPickerRegion.m_iRight, 10 };
 
     // switches
@@ -418,7 +396,6 @@ namespace FGUI
     static bool bColorHueSelected = false;
     static bool bAlphaSliderSelected = false;
 
-    // get cursor position
     FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
     if (FGUI::INPUT.GetKeyPress(MOUSE_1))
@@ -479,10 +456,8 @@ namespace FGUI
     // color gap
     static constexpr int iColorPickerGap = 250;
 
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, (m_dmSize.m_iWidth - iColorPickerGap), m_dmSize.m_iHeight };
 
-    // scrollbar area
     FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, (arWidgetRegion.m_iTop + 20), 15, (m_dmSize.m_iHeight - 20) };
 
     if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
@@ -499,7 +474,6 @@ namespace FGUI
     // colorlist entries
     for (std::size_t i = m_iScrollThumbPosition; (i < m_prgpColorInfo.size()) && (iEntriesDisplayed < iCalculatedEntries); i++)
     {
-      // entry area
       FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop + (m_iEntrySpacing * iEntriesDisplayed) + 20, (arWidgetRegion.m_iRight - 15), m_iEntrySpacing };
 
       // select an entry
@@ -511,10 +485,8 @@ namespace FGUI
       iEntriesDisplayed++;
     }
 
-    // plus button area
     FGUI::AREA arPlusButtonRegion = { (GetAbsolutePosition().m_iX + 70), (GetAbsolutePosition().m_iY - 1), 16, 16 };
 
-    // minus button area
     FGUI::AREA arMinusButtonRegion = { (GetAbsolutePosition().m_iX + 90), (GetAbsolutePosition().m_iY - 1), 16, 16 };
 
     if (FGUI::INPUT.IsCursorInArea(arPlusButtonRegion))
@@ -538,7 +510,6 @@ namespace FGUI
       }
     }
 
-    // gradient checkbox area
     FGUI::AREA arCheckboxRegion = { (GetAbsolutePosition().m_iX + 115), (GetAbsolutePosition().m_iY - 1), 16, 16 };
 
     if (FGUI::INPUT.IsCursorInArea(arCheckboxRegion))

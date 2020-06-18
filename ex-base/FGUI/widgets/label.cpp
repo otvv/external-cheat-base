@@ -49,10 +49,8 @@ namespace FGUI
 
   void CLabel::Geometry()
   {
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, dmTitleTextSize.m_iWidth, dmTitleTextSize.m_iHeight };
 
     // label body
@@ -60,25 +58,21 @@ namespace FGUI
     {
       FGUI::RENDER.Text(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, m_ulFont, { 35, 35, 35 }, m_strTitle);
     }
-
     else if (m_nStyle == static_cast<int>(LABEL_STYLE::COLORED))
     {
       FGUI::RENDER.Text(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, m_ulFont, m_clrLabel, m_strTitle);
     }
-
     else if (m_nStyle == static_cast<int>(LABEL_STYLE::LINK))
     {
-      FGUI::RENDER.Text(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, m_ulFont, { 25, 25, 215 }, m_strTitle);
-      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + arWidgetRegion.m_iBottom) + 1, arWidgetRegion.m_iRight, 1, { 25, 25, 255 });
+      FGUI::RENDER.Text(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, m_ulFont, { 25, 25, 195 }, m_strTitle);
+      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + arWidgetRegion.m_iBottom) + 1, arWidgetRegion.m_iRight, 1, { 25, 25, 195 });
     }
   }
 
   void CLabel::Update()
   {
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, dmTitleTextSize.m_iWidth, dmTitleTextSize.m_iHeight };
 
     // check if the label is a link

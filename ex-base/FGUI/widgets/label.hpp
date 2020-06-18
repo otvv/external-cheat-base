@@ -31,7 +31,7 @@ namespace FGUI
     void AddCallback(std::function<void()> callback);
 
     // @brief: set the label style (NORMAL = it will draw a normal label; COLORED = it will draw a colored label; LINK = it will draw a clickable label)
-    // @params: FGUI::MULTIBOX_STYLE style = multibox style (type)
+    // @params: FGUI::LABEL_STYLE style = label style (type)
     void SetStyle(FGUI::LABEL_STYLE style);
 
     // @brief: set the label color (it only works for colored label type)

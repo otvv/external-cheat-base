@@ -16,7 +16,7 @@ namespace FGUI
     m_bIsChecked = false;
     m_fnctCallback = nullptr;
     m_nType = static_cast<int>(WIDGET_TYPE::CHECKBOX);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CCheckBox::SetState(bool onoff)
@@ -36,7 +36,6 @@ namespace FGUI
 
   void CCheckBox::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     // checkbox body
@@ -67,25 +66,24 @@ namespace FGUI
   void CCheckBox::Update()
   {
     m_dmSize = { 16, 16 }; // this is required to keep the widget from being padded on groupboxes
+
+    if (m_bIsChecked)
+    {
+      if (m_fnctCallback)
+      {
+        // call function
+        m_fnctCallback();
+      }
+    }
   }
 
   void CCheckBox::Input()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
     {
       m_bIsChecked = !m_bIsChecked;
-
-      if (m_bIsChecked)
-      {
-        if (m_fnctCallback)
-        {
-          // call function
-          m_fnctCallback();
-        }
-      }
     }
   }
 

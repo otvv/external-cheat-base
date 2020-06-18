@@ -181,6 +181,7 @@
     <ClCompile Include="FGUI\widgets\keybinder.cpp" />
     <ClCompile Include="FGUI\widgets\label.cpp" />
     <ClCompile Include="FGUI\widgets\listbox.cpp" />
+    <ClCompile Include="FGUI\widgets\combobox.cpp" />
     <ClCompile Include="FGUI\widgets\multibox.cpp" />
     <ClCompile Include="FGUI\widgets\slider.cpp" />
     <ClCompile Include="FGUI\widgets\tabs.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="FGUI\widgets\keybinder.hpp" />
     <ClInclude Include="FGUI\widgets\label.hpp" />
     <ClInclude Include="FGUI\widgets\listbox.hpp" />
+    <ClInclude Include="FGUI\widgets\combobox.hpp" />
     <ClInclude Include="FGUI\widgets\multibox.hpp" />
     <ClInclude Include="FGUI\widgets\slider.hpp" />
     <ClInclude Include="FGUI\widgets\tabs.hpp" />

@@ -25,10 +25,8 @@ namespace FGUI
 
   void CButton::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
     // button body
@@ -52,7 +50,6 @@ namespace FGUI
 
   void CButton::Input()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))

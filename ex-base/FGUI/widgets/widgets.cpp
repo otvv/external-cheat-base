@@ -4,10 +4,10 @@
 
 // library includes
 #include "widgets.hpp"
-#include "listbox.hpp"
-#include "multibox.hpp"
 #include "checkbox.hpp"
+#include "combobox.hpp"
 #include "groupbox.hpp"
+#include "listbox.hpp"
 #include "slider.hpp"
 
 namespace FGUI
@@ -35,7 +35,6 @@ namespace FGUI
 
     if (m_pParentForm)
     {
-      // get the parent form's widget area
       FGUI::AREA arWidgetArea = m_pParentForm->GetWidgetArea();
 
       ptTemporaryPosition = { (m_ptPosition.m_iX + arWidgetArea.m_iLeft), (m_ptPosition.m_iY + arWidgetArea.m_iTop) };
@@ -106,7 +105,7 @@ namespace FGUI
       return true;
     }
 
-    // otherwise, it will lock them until cetain conditions are met
+    // otherwise, it will lock them until certain conditions are met
     switch (m_pMedium->m_nType)
     {
       case static_cast<int>(WIDGET_TYPE::LISTBOX) :
@@ -121,12 +120,9 @@ namespace FGUI
       {
         return std::reinterpret_pointer_cast<FGUI::CSlider>(m_pMedium)->GetValue() == static_cast<float>(m_iPage);
       }
-      case static_cast<int>(WIDGET_TYPE::MULTIBOX) :
+      case static_cast<int>(WIDGET_TYPE::COMBOBOX) :
       {
-        if (std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pMedium)->GetStyle() == static_cast<int>(MULTIBOX_STYLE::NORMAL))
-        {
-          return std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pMedium)->GetIndex() == static_cast<std::size_t>(m_iPage);
-        }
+        return std::reinterpret_pointer_cast<FGUI::CComboBox>(m_pMedium)->GetIndex() == static_cast<std::size_t>(m_iPage);
       }
     }
 
@@ -172,6 +168,16 @@ namespace FGUI
   FGUI::FONT CWidgets::GetFont()
   {
     return m_ulFont;
+  }
+
+  void CWidgets::SetIdentificator(std::string identificator)
+  {
+    m_strIdentificator = identificator;
+  }
+
+  std::string CWidgets::GetIdentificator()
+  {
+    return m_strIdentificator;
   }
 
 } // namespace FGUI

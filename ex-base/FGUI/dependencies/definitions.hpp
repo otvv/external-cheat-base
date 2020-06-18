@@ -238,20 +238,22 @@ namespace FGUI
     BUTTON = 0,
     CHECKBOX,
     GROUPBOX,
-    MULTIBOX,
+    COMBOBOX,
     SLIDER,
     KEYBINDER,
     LISTBOX,
     LABEL,
     TEXTBOX,
     COLORLIST,
-    COLORPICKER
+    COLORPICKER,
+    MULTIBOX
   };
 
   using WIDGET_FLAG = enum struct ESWidgetFlag_t : int {
     DRAWABLE = 0x1,
     CLICKABLE = 0x2,
     FOCUSABLE = 0x4,
+    SAVABLE = 0x8,
 
     FULLSCREEN = 0x16 // this is exclusively for Forms
   };

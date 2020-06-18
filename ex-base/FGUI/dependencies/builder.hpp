@@ -15,6 +15,7 @@
 #include "../widgets/checkbox.hpp"
 #include "../widgets/colorlist.hpp"
 #include "../widgets/colorpicker.hpp"
+#include "../widgets/combobox.hpp"
 #include "../widgets/form.hpp"
 #include "../widgets/groupbox.hpp"
 #include "../widgets/keybinder.hpp"
@@ -175,7 +176,7 @@ namespace FGUI
       return *this;
     }
 
-    // @brief: groupbox/multibox scrollbar state
+    // @brief: groupbox scrollbar state
     // @args: bool state = scrollbar state (enabled/disabled)
     CBuilder& Scrollbar(bool onoff)
     {
@@ -292,13 +293,17 @@ namespace FGUI
       return *this;
     }
 
-    // @brief: set the selected index of a widget (multibox and listbox)
+    // @brief: set the selected index of a widget (combobox, multibox and listbox)
     // @args: std::size_T index = selected index
     CBuilder& Index(std::size_t index)
     {
       if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::LISTBOX))
       {
         std::reinterpret_pointer_cast<FGUI::CListBox>(m_pTemporaryWidget)->SetIndex(index);
+      }
+      else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COMBOBOX))
+      {
+        std::reinterpret_pointer_cast<FGUI::CComboBox>(m_pTemporaryWidget)->SetIndex(index);
       }
       else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::MULTIBOX))
       {
@@ -332,9 +337,22 @@ namespace FGUI
       return *this;
     }
 
+    // @brief: set the widget identificator
+    // @args: std::string identificator = widget identificator (variable on the config file)
+    CBuilder& Identificator(std::string identificator)
+    {
+      if (m_pTemporaryWidget)
+      {
+        m_pTemporaryWidget->SetIdentificator(identificator);
+      }
+
+      return *this;
+    }
+
     // @brief: set the widget state
     // @args: bool state = widget state (toggled on/off)
     // @note: state = set the checkbox state (checked or not)
+    // state = set combobox dropdown list state (toggled on/off)
     // state = set multibox dropdown list state (toggled on/off)
     // state = set the form state (on/off)
     CBuilder& State(bool state)
@@ -344,6 +362,10 @@ namespace FGUI
         if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::CHECKBOX))
         {
           std::reinterpret_pointer_cast<FGUI::CCheckBox>(m_pTemporaryWidget)->SetState(state);
+        }
+        else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COMBOBOX))
+        {
+          std::reinterpret_pointer_cast<FGUI::CComboBox>(m_pTemporaryWidget)->SetState(state);
         }
         else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::MULTIBOX))
         {
@@ -358,20 +380,17 @@ namespace FGUI
       return *this;
     }
 
-    // @brief: add a new entry to the widget (multibox and listbox)
+    // @brief: add a new entry to the widget (combobox, multibox and listbox)
     // @args: std::string title = entry title, unsigned int value = custom value
     CBuilder& Entry(std::string title, unsigned int value = 0)
     {
-      if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::MULTIBOX))
+      if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COMBOBOX))
       {
-        if (std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->GetStyle() == static_cast<int>(MULTIBOX_STYLE::NORMAL))
-        {
-          std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->AddEntry(title, value);
-        }
-        else if (std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->GetStyle() == static_cast<int>(MULTIBOX_STYLE::MULTI))
-        {
-          std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->AddEntry(title, static_cast<bool>(value));
-        }
+        std::reinterpret_pointer_cast<FGUI::CComboBox>(m_pTemporaryWidget)->AddEntry(title, value);
+      }
+      else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::MULTIBOX))
+      {
+        std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->AddEntry(title, static_cast<bool>(value));
       }
       else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::LISTBOX))
       {
@@ -381,18 +400,13 @@ namespace FGUI
       return *this;
     }
 
-    // @brief: set the style of a widget (multibox, label and textbox)
+    // @brief: set the style of a widget (label and textbox)
     // @args: int style
-    // @note: style = multibox style (normal and multi - FGUI::MULTIBOX_STYLE)
-    // style = label style (normal, colored and link - FGUI::LABEL_STYLE)
-    // style = textbox style (normal, password and uppercase - FGUI::TEXTBOX_STYLE)
+    // @note: style = label style (normal, colored and link - FGUI::LABEL_STYLE)
+    // style = textbox style (normal, password (hidden) and uppercase - FGUI::TEXTBOX_STYLE)
     CBuilder& Style(int style)
     {
-      if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::MULTIBOX))
-      {
-        std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->SetStyle(static_cast<FGUI::MULTIBOX_STYLE>(style));
-      }
-      else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::LABEL))
+      if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::LABEL))
       {
         std::reinterpret_pointer_cast<FGUI::CLabel>(m_pTemporaryWidget)->SetStyle(static_cast<FGUI::LABEL_STYLE>(style));
       }
@@ -409,9 +423,9 @@ namespace FGUI
     {
       if (!m_pTemporaryForm && m_pTemporaryWidget)
       {
-        if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::MULTIBOX))
+        if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COMBOBOX))
         {
-          std::reinterpret_pointer_cast<FGUI::CMultiBox>(m_pTemporaryWidget)->AddCallback(callback);
+          std::reinterpret_pointer_cast<FGUI::CComboBox>(m_pTemporaryWidget)->AddCallback(callback);
         }
         else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::LABEL))
         {

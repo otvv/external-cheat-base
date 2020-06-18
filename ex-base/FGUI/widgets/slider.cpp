@@ -19,7 +19,7 @@ namespace FGUI
     m_rngBoundaries = { 0.f, 0.f };
     m_ulFont = 0;
     m_nType = static_cast<int>(WIDGET_TYPE::SLIDER);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CSlider::SetValue(float value)
@@ -45,13 +45,10 @@ namespace FGUI
 
   void CSlider::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
-    // slider value text size
     FGUI::DIMENSION dmValueTextSize = FGUI::RENDER.GetTextSize(m_ulFont, std::to_string(static_cast<int>(m_flValue)) + " " + m_strPrefix);
 
     // slider position ratio
@@ -71,22 +68,7 @@ namespace FGUI
 
   void CSlider::Update()
   {
-    // cursor position
     FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
-
-    // custom height in pixels from the "clickable" area
-    static constexpr int iCustomHeight = 15;
-
-    // widget's area
-    FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, iCustomHeight };
-
-    if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
-    {
-      if (FGUI::INPUT.GetKeyPress(MOUSE_1))
-      {
-        m_bIsDragging = true;
-      }
-    }
 
     // if the user is dragging the slider
     if (m_bIsDragging)
@@ -97,7 +79,7 @@ namespace FGUI
         float flRatio = 0.f;
 
         // change slider value based on mouse movement
-        flXPosDelta = (ptCursorPos.m_iX - arWidgetRegion.m_iLeft);
+        flXPosDelta = (ptCursorPos.m_iX - GetAbsolutePosition().m_iX);
 
         // clamp thumb position
         if (flXPosDelta < 0.f)
@@ -124,6 +106,15 @@ namespace FGUI
 
   void CSlider::Input()
   {
+    // custom height in pixels from the "clickable" area
+    static constexpr int iCustomHeight = 15;
+
+    FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, iCustomHeight };
+
+    if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+    {
+      m_bIsDragging = true;
+    }
   }
 
 } // namespace FGUI

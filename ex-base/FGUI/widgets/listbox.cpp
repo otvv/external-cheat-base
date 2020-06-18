@@ -18,7 +18,7 @@ namespace FGUI
     m_fnctCallback = nullptr;
     m_prgpEntries = {};
     m_nType = static_cast<int>(WIDGET_TYPE::LISTBOX);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CListBox::SetIndex(std::size_t index)
@@ -49,13 +49,10 @@ namespace FGUI
 
   void CListBox::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // scrollbar area
     FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, m_dmSize.m_iHeight };
 
-    // widget's title text size
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
 
     // entries displayed
@@ -74,7 +71,6 @@ namespace FGUI
     // listbox entries
     for (std::size_t i = m_iScrollThumbPosition; (i < m_prgpEntries.first.size()) && (iEntriesDisplayed < iCalculatedEntries); i++)
     {
-      // entry area
       FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop + (m_iEntrySpacing * iEntriesDisplayed), (arWidgetRegion.m_iRight - arScrollBarRegion.m_iRight), m_iEntrySpacing };
 
       // check if the user is hovering something on the listbox
@@ -100,7 +96,6 @@ namespace FGUI
       iEntriesDisplayed++;
     }
 
-    // thumb properties
     static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = { 8, 5 };
 
     // calculate thumb position
@@ -143,7 +138,6 @@ namespace FGUI
       // calculate the amount of entries that will be drawn on the listbox
       int iCalculatedEntries = (m_dmSize.m_iHeight / m_iEntrySpacing);
 
-      // cursor position
       FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
       if (FGUI::INPUT.GetKeyState(MOUSE_1))
@@ -182,13 +176,10 @@ namespace FGUI
 
   void CListBox::Input()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // thumb properties
     static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = { 8, 5 };
 
-    // scrollbar area
     FGUI::AREA arScrollBarRegion = { ((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15), arWidgetRegion.m_iTop, dmScrollBarThumbWidth.m_iWidth, (m_dmSize.m_iHeight - m_iEntrySpacing) };
 
     if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
@@ -205,7 +196,6 @@ namespace FGUI
     // listbox entries
     for (std::size_t i = m_iScrollThumbPosition; (i < m_prgpEntries.first.size()) && (iEntriesDisplayed < iCalculatedEntries); i++)
     {
-      // entry area
       FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop + (m_iEntrySpacing * iEntriesDisplayed), (arWidgetRegion.m_iRight - 15), m_iEntrySpacing };
 
       // select an entry

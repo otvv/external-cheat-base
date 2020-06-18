@@ -16,7 +16,7 @@ namespace FGUI
     m_prRelativePos = { 0.f, 0.f };
     m_ulFont = 0;
     m_nType = static_cast<int>(WIDGET_TYPE::COLORPICKER);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::FOCUSABLE);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::FOCUSABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
   void CColorPicker::SetColor(FGUI::COLOR color)
@@ -31,7 +31,6 @@ namespace FGUI
 
   void CColorPicker::Geometry()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     // color picker button body
@@ -41,13 +40,10 @@ namespace FGUI
 
     if (m_bOpened)
     {
-      // color picker size
       static constexpr FGUI::DIMENSION dmColorPickerSize = { 135, 135 };
 
-      // color picker's area
       FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + 25), GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-      // color picker's pixelation (ghetto optimization)
       static constexpr int iPixelation = 3; // TODO: make a function for this
 
       // color picker body
@@ -76,13 +72,12 @@ namespace FGUI
         }
       }
 
-      // TODO: move this to another place
-      const int clampedRelativePosX = std::clamp(static_cast<int>(m_prRelativePos.m_flX), 5, std::max(5, arColorPickerRegion.m_iRight));
-      const int clampedRelativePosY = std::clamp(static_cast<int>(m_prRelativePos.m_flY), 5, std::max(5, arColorPickerRegion.m_iBottom));
+      const int iClampedRelativePosX = std::clamp(static_cast<int>(m_prRelativePos.m_flX), 5, std::max(5, arColorPickerRegion.m_iRight));
+      const int iClampedRelativePosY = std::clamp(static_cast<int>(m_prRelativePos.m_flY), 5, std::max(5, arColorPickerRegion.m_iBottom));
 
       // color hsb body
       FGUI::RENDER.Outline((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) - 1, arColorPickerRegion.m_iTop - 1, 1, arColorPickerRegion.m_iBottom + 2, { 220, 220, 220 });
-      FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + clampedRelativePosX) - 5, (arColorPickerRegion.m_iTop + clampedRelativePosY) - 5, 5, 5, { 35, 35, 35 });
+      FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + iClampedRelativePosX) - 5, (arColorPickerRegion.m_iTop + iClampedRelativePosY) - 5, 5, 5, { 35, 35, 35 });
 
       // hue bar body
       FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, { 220, 220, 220 });
@@ -98,21 +93,27 @@ namespace FGUI
   {
     m_dmSize = { 20, 15 }; // this is required to keep the widget from being padded on groupboxes
 
+    static constexpr FGUI::DIMENSION dmColorPickerSize = { 135, 135 };
+
+    FGUI::AREA arWidgetRegion = { (GetAbsolutePosition().m_iX + 25), GetAbsolutePosition().m_iY, (dmColorPickerSize.m_iWidth + 40), dmColorPickerSize.m_iHeight };
+
+    if (!FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+    {
+      if (FGUI::INPUT.GetKeyPress(MOUSE_1))
+      {
+        m_bOpened = false;
+      }
+    }
+
     if (m_bOpened)
     {
-      // color picker size
-      static constexpr FGUI::DIMENSION dmColorPickerSize = { 135, 135 };
-
-      // color picker's area
+      // color picker area
       FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + 25), GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-      // color hsb area
       FGUI::AREA arColorHSBRegion = { arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom };
 
-      // color hue area
       FGUI::AREA arColorHueRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
 
-      // color alpha area
       FGUI::AREA arColorAlphaRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
 
       // switches
@@ -120,7 +121,6 @@ namespace FGUI
       static bool bColorHueSelected = false;
       static bool bColorAlphaSelected = false;
 
-      // get cursor position
       FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
       if (FGUI::INPUT.GetKeyPress(MOUSE_1))
@@ -158,16 +158,10 @@ namespace FGUI
       // keep widget focused
       m_pParentForm->SetFocusedWidget(shared_from_this());
     }
-    else
-    {
-      // stop focusing
-      m_pParentForm->SetFocusedWidget(nullptr);
-    }
   }
 
   void CColorPicker::Input()
   {
-    // widget's area
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     // open colorpicker
