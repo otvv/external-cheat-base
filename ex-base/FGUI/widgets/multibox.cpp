@@ -4,20 +4,21 @@
 
 // library includes
 #include "multibox.hpp"
+#include "container.hpp"
 
 namespace FGUI
 {
   CMultiBox::CMultiBox()
   {
     m_strTitle = "MultiBox";
-    m_ulFont = 0;
+    m_anyFont = 0;
     m_dmSize = { 150, 20 };
     m_dmBackupSize = { m_dmSize };
     m_iEntrySpacing = 20;
-    m_uiSelectedEntry = 0;
+    m_ullSelectedEntry = 0;
     m_prgpEntries = {};
     m_bIsOpened = false;
-    m_nType = static_cast<int>(WIDGET_TYPE::COMBOBOX);
+    m_nType = static_cast<int>(WIDGET_TYPE::MULTIBOX);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::FOCUSABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
 
@@ -33,12 +34,12 @@ namespace FGUI
 
   void CMultiBox::SetIndex(std::size_t index)
   {
-    m_uiSelectedEntry = index;
+    m_ullSelectedEntry = index;
   }
 
   std::size_t CMultiBox::GetIndex()
   {
-    return m_uiSelectedEntry;
+    return m_ullSelectedEntry;
   }
 
   void CMultiBox::SetValue(std::size_t index, unsigned int value)
@@ -66,7 +67,7 @@ namespace FGUI
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmBackupSize.m_iHeight };
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
+    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
     // multibox body
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion) || m_bIsOpened)
@@ -81,7 +82,7 @@ namespace FGUI
     }
 
     // multibox label
-    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_strTitle + ":");
+    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
 
     // string format
     std::string strMultiString = { };
@@ -90,7 +91,7 @@ namespace FGUI
     {
       // switches
       bool bHasReachedLength = strMultiString.length() > 15;
-      bool bIsFirstItem = strMultiString.length() <= 0;
+      bool bIsFirstItem = strMultiString.length() == 0;
 
       if (m_prgpEntries.second[i] && !bHasReachedLength)
       {
@@ -112,13 +113,13 @@ namespace FGUI
       }
     }
 
-    if (strMultiString.length() <= 0)
+    if (strMultiString.length() == 0)
     {
       strMultiString.assign("None");
     }
 
     // draw current selected entry
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, strMultiString);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, strMultiString);
 
     if (m_bIsOpened)
     {
@@ -134,12 +135,12 @@ namespace FGUI
         if (FGUI::INPUT.IsCursorInArea(arEntryRegion) || m_prgpEntries.second[i])
         {
           FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 1, arEntryRegion.m_iTop, arEntryRegion.m_iRight - 2, arEntryRegion.m_iBottom, { 25, 145, 255 });
-          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_ulFont, { 255, 255, 255 }, m_prgpEntries.first[i]);
+          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_anyFont, { 255, 255, 255 }, m_prgpEntries.first[i]);
         }
         else
         {
           FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 1, (arEntryRegion.m_iTop + arEntryRegion.m_iBottom), arEntryRegion.m_iRight - 1, 1, { 205, 205, 205 });
-          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_ulFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
+          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_anyFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
         }
       }
     }
@@ -155,21 +156,15 @@ namespace FGUI
   {
     if (m_bIsOpened)
     {
-      FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
-
-      // close dropdown if the user clicks on something else
-      if (!FGUI::INPUT.IsCursorInArea(arWidgetRegion))
-      {
-        if (FGUI::INPUT.GetKeyPress(MOUSE_1))
-        {
-          m_bIsOpened = false;
-        }
-      }
+      FGUI::AREA arOpenedWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
       // keep widget focused
-      if (GetParentForm()->GetFocusedWidget() != shared_from_this())
+      std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
+
+      // close dropdown list if the user clicks on something else
+      if (!FGUI::INPUT.IsCursorInArea(arOpenedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1))
       {
-        GetParentForm()->SetFocusedWidget(shared_from_this());
+        m_bIsOpened = false;
       }
 
       m_dmSize.m_iHeight = m_iEntrySpacing + (m_prgpEntries.first.size() * m_iEntrySpacing) + 2;
@@ -203,7 +198,14 @@ namespace FGUI
           {
             // select an entry
             m_prgpEntries.second[i] = !m_prgpEntries.second[i];
-          }
+
+            if (m_prgpEntries.second[i])
+            {
+              // close dropdown list after selecting something
+              // NOTE: maybe remove this?
+              m_bIsOpened = false;
+            }
+          } 
         }
       }
     }

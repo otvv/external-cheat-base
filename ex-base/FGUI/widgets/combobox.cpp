@@ -4,17 +4,18 @@
 
 // library includes
 #include "combobox.hpp"
+#include "container.hpp"
 
 namespace FGUI
 {
   CComboBox::CComboBox()
   {
     m_strTitle = "ComboBox";
-    m_ulFont = 0;
+    m_anyFont = 0;
     m_dmSize = { 150, 20 };
     m_dmBackupSize = { m_dmSize };
     m_iEntrySpacing = 20;
-    m_uiSelectedEntry = 0;
+    m_ullSelectedEntry = 0;
     m_prgpEntries = {};
     m_fnctCallback = nullptr;
     m_bIsOpened = false;
@@ -34,12 +35,12 @@ namespace FGUI
 
   void CComboBox::SetIndex(std::size_t index)
   {
-    m_uiSelectedEntry = index;
+    m_ullSelectedEntry = index;
   }
 
   std::size_t CComboBox::GetIndex()
   {
-    return m_uiSelectedEntry;
+    return m_ullSelectedEntry;
   }
 
   void CComboBox::SetValue(std::size_t index, unsigned int value)
@@ -49,7 +50,7 @@ namespace FGUI
 
   std::size_t CComboBox::GetValue()
   {
-    return m_prgpEntries.second[m_uiSelectedEntry];
+    return m_prgpEntries.second[m_ullSelectedEntry];
   }
 
   void CComboBox::AddEntry(std::string name, unsigned int value)
@@ -67,7 +68,7 @@ namespace FGUI
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmBackupSize.m_iHeight };
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
+    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
     // combobox body
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion) || m_bIsOpened)
@@ -82,10 +83,10 @@ namespace FGUI
     }
 
     // combobox label
-    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_strTitle + ":");
+    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
 
     // draw current selected entry
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_prgpEntries.first[m_uiSelectedEntry]);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_prgpEntries.first[m_ullSelectedEntry]);
 
     if (m_bIsOpened)
     {
@@ -98,15 +99,15 @@ namespace FGUI
         FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + 21) + (static_cast<int>(i) * m_iEntrySpacing), arWidgetRegion.m_iRight, m_iEntrySpacing };
 
         // check if the user is hovering/have selected an entry
-        if (FGUI::INPUT.IsCursorInArea(arEntryRegion) || m_uiSelectedEntry == i)
+        if (FGUI::INPUT.IsCursorInArea(arEntryRegion) || m_ullSelectedEntry == i)
         {
           FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 1, arEntryRegion.m_iTop, arEntryRegion.m_iRight - 2, arEntryRegion.m_iBottom, { 25, 145, 255 });
-          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_ulFont, { 255, 255, 255 }, m_prgpEntries.first[i]);
+          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_anyFont, { 255, 255, 255 }, m_prgpEntries.first[i]);
         }
         else
         {
           FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 1, (arEntryRegion.m_iTop + arEntryRegion.m_iBottom), arEntryRegion.m_iRight - 1, 1, { 205, 205, 205 });
-          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_ulFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
+          FGUI::RENDER.Text(arEntryRegion.m_iLeft + 5, arEntryRegion.m_iTop + 2, m_anyFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
         }
       }
     }
@@ -122,8 +123,13 @@ namespace FGUI
   {
     if (m_bIsOpened)
     {
+      FGUI::AREA arOpenedWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+
+      // keep widget focused
+      std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
+
       // close dropdown list if the user clicks on something else
-      if (GetParentForm()->GetFocusedWidget() != shared_from_this())
+      if (!FGUI::INPUT.IsCursorInArea(arOpenedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1))
       {
         m_bIsOpened = false;
       }
@@ -158,15 +164,18 @@ namespace FGUI
           if (FGUI::INPUT.IsCursorInArea(arEntryRegion))
           {
             // select an entry
-            m_uiSelectedEntry = i;
+            m_ullSelectedEntry = i;
 
-            if (m_uiSelectedEntry == i)
+            if (m_ullSelectedEntry == i)
             {
               if (m_fnctCallback)
               {
                 // call function
                 m_fnctCallback();
               }
+               
+              // close dropdown list after selecting something
+              m_bIsOpened = false;
             }
           }
         }

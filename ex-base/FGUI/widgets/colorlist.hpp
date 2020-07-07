@@ -16,6 +16,10 @@
 
 namespace FGUI
 {
+  class CButton;
+  class CCheckBox;
+  class CSlider;
+
   using COLOR_INFO = struct SColorInfo_t
   {
     SColorInfo_t(std::string identificator, FGUI::COLOR color, bool gradient);
@@ -23,8 +27,12 @@ namespace FGUI
     std::string m_strIdentificator;
     FGUI::COLOR m_clrFirst;
     FGUI::COLOR m_clrSecond;
-    bool m_bGradient;
     bool m_bIsSecondColorAdded;
+
+    std::shared_ptr<FGUI::CButton> m_pPlusButton;
+    std::shared_ptr<FGUI::CButton> m_pMinusButton;
+    std::shared_ptr<FGUI::CCheckBox> m_pGradientCheckBox;
+    std::shared_ptr<FGUI::CSlider> m_pAlphaSlider;
   };
 
   class CColorList : public FGUI::CWidgets
@@ -33,16 +41,16 @@ namespace FGUI
     CColorList();
 
     // @brief: adds a new color into the list
-    // @params: std::string identificator = color identificator (label), FGUI::COLOR color = color, bool gradient = interpolation state (true by default or not)
-    void AddColor(std::string identificator, FGUI::COLOR color, bool gradient = false);
+    // @params: std::string identificator = color identificator (label), FGUI::COLOR color = color, bool gradient = interpolation state
+    void AddColor(std::string identificator, FGUI::COLOR color, bool gradient);
 
     // @brief: set a custom color and the gradient state of an entry on the list
-    // @params: std::size_t index = entry index, FGUI::COLOR color = color, bool gradient = gradient state (defaults to false)
-    void SetColor(std::size_t index, FGUI::COLOR color, bool gradient = false);
+    // @params: std::size_t index = entry index, FGUI::COLOR color = color, bool gradient = gradient state
+    void SetColor(std::size_t index, FGUI::COLOR color, bool gradient);
 
     // @brief: returns the current color from a entry on the list
-    // @params: std::size_t index = entry index (defaults to 0)
-    FGUI::COLOR GetColor(std::size_t index = 0);
+    // @params: std::size_t index = entry index
+    FGUI::COLOR GetColor(std::size_t index);
 
     // @brief: get color info
     std::vector<FGUI::COLOR_INFO> GetColorInfo();
@@ -59,8 +67,9 @@ namespace FGUI
   private:
     std::size_t m_uiSelectedEntry;
     int m_iEntrySpacing;
-    bool m_bIsDragging;
+    bool m_bIsDraggingThumb;
     int m_iScrollThumbPosition;
+    FGUI::PRECISION m_prRelativePos;
     std::vector<FGUI::COLOR_INFO> m_prgpColorInfo;
   };
 

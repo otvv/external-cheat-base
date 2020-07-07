@@ -7,8 +7,8 @@
 
 #include <string>
 
-#include "FGUI/dependencies/definitions.hpp"
-#include "FGUI/dependencies/aliases.hpp"
+#include "FGUI/misc/definitions.hpp"
+#include "FGUI/misc/aliases.hpp"
 
 namespace FONTS
 {
@@ -21,7 +21,30 @@ namespace RENDER
   inline D3DPRESENT_PARAMETERS m_parParameters;
   inline IDirect3DDevice9Ex* m_pDevice;
 
-  inline void CreateFont(FGUI::FONT& _font, std::string _family, int _size, int _flags, bool _bold) // TODO: handle font flags
+  inline void UpdateDeviceState()
+  {
+    m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+    m_pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
+    m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+    m_pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+    m_pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+    m_pDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+    m_pDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+    m_pDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+    m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+    m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+    m_pDevice->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
+    m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+    m_pDevice->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_INVDESTALPHA);
+    m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+    m_pDevice->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_ONE);
+    m_pDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, FALSE);
+    m_pDevice->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_ALPHA);
+  }
+
+  inline void CreateFont(FGUI::FONT &_font, std::string _family, int _size, int _flags, bool _bold) // TODO: handle font flags
   {
     D3DXCreateFont(m_pDevice, _size, 0, _bold ? FW_BOLD : FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _family.c_str(), &_font);
   }

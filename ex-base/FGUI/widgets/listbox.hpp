@@ -34,7 +34,7 @@ namespace FGUI
 
     // @brief: adds a new entry inside the listbox
     // @params: std::string name = entry title, unsigned int value = entry custom value
-    void AddEntry(std::string name, unsigned int value = 0);
+    void AddEntry(std::string name, unsigned int value);
 
     // @brief: adds a function callback for the listbox (it will call the function whenever the user selects something on the listbox)
     // @params: std::function<void()> callback = function instance
@@ -50,9 +50,9 @@ namespace FGUI
     void Input() override;
 
   private:
-    std::size_t m_uiSelectedEntry;
+    std::size_t m_ullSelectedEntry;
     int m_iEntrySpacing;
-    bool m_bIsDragging;
+    bool m_bIsDraggingThumb;
     int m_iScrollThumbPosition;
     std::pair<std::vector<std::string>, std::vector<int>> m_prgpEntries;
     std::function<void()> m_fnctCallback;

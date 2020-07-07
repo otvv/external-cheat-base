@@ -11,11 +11,12 @@ namespace FGUI
   CListBox::CListBox()
   {
     m_strTitle = "ListBox";
-    m_ulFont = 0;
+    m_anyFont = 0;
     m_iEntrySpacing = 20;
-    m_uiSelectedEntry = 0;
+    m_ullSelectedEntry = 0;
     m_iScrollThumbPosition = 0;
     m_fnctCallback = nullptr;
+    m_bIsDraggingThumb = false;
     m_prgpEntries = {};
     m_nType = static_cast<int>(WIDGET_TYPE::LISTBOX);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
@@ -23,17 +24,17 @@ namespace FGUI
 
   void CListBox::SetIndex(std::size_t index)
   {
-    m_uiSelectedEntry = index;
+    m_ullSelectedEntry = index;
   }
 
   std::size_t CListBox::GetIndex()
   {
-    return m_uiSelectedEntry;
+    return m_ullSelectedEntry;
   }
 
   int CListBox::GetValue()
   {
-    return m_prgpEntries.second[m_uiSelectedEntry];
+    return m_prgpEntries.second[m_ullSelectedEntry];
   }
 
   void CListBox::AddEntry(std::string name, unsigned int value)
@@ -53,7 +54,7 @@ namespace FGUI
 
     FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, m_dmSize.m_iHeight };
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
+    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
     // entries displayed
     int iEntriesDisplayed = 0;
@@ -66,9 +67,8 @@ namespace FGUI
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + (iEntriesDisplayed * m_iEntrySpacing)) + 1, (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 2), { 255, 255, 255 });
 
     // listbox label
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_ulFont, { 35, 35, 35 }, m_strTitle);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_anyFont, { 35, 35, 35 }, m_strTitle);
 
-    // listbox entries
     for (std::size_t i = m_iScrollThumbPosition; (i < m_prgpEntries.first.size()) && (iEntriesDisplayed < iCalculatedEntries); i++)
     {
       FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop + (m_iEntrySpacing * iEntriesDisplayed), (arWidgetRegion.m_iRight - arScrollBarRegion.m_iRight), m_iEntrySpacing };
@@ -78,19 +78,19 @@ namespace FGUI
       {
         FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft, arEntryRegion.m_iTop, arEntryRegion.m_iRight, arEntryRegion.m_iBottom, { 255, 255, 235 });
         FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft, (arEntryRegion.m_iTop + arEntryRegion.m_iBottom) - 1, arEntryRegion.m_iRight, 1, { 205, 205, 205 });
-        FGUI::RENDER.Text((arEntryRegion.m_iLeft + 5), (arEntryRegion.m_iTop + 3), m_ulFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
+        FGUI::RENDER.Text((arEntryRegion.m_iLeft + 5), (arEntryRegion.m_iTop + 3), m_anyFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
       }
       else
       {
         FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft, (arEntryRegion.m_iTop + arEntryRegion.m_iBottom) - 1, arEntryRegion.m_iRight, 1, { 205, 205, 205 });
-        FGUI::RENDER.Text((arEntryRegion.m_iLeft + 5), (arEntryRegion.m_iTop + 3), m_ulFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
+        FGUI::RENDER.Text((arEntryRegion.m_iLeft + 5), (arEntryRegion.m_iTop + 3), m_anyFont, { 35, 35, 35 }, m_prgpEntries.first[i]);
       }
 
       // if the user selects an entry on the listbox
-      if (m_uiSelectedEntry == i)
+      if (m_ullSelectedEntry == i)
       {
         FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft, arEntryRegion.m_iTop, arEntryRegion.m_iRight, arEntryRegion.m_iBottom, { 25, 145, 255 });
-        FGUI::RENDER.Text((arEntryRegion.m_iLeft + 5), (arEntryRegion.m_iTop + 3), m_ulFont, { 245, 245, 245 }, m_prgpEntries.first[i]);
+        FGUI::RENDER.Text((arEntryRegion.m_iLeft + 5), (arEntryRegion.m_iTop + 3), m_anyFont, { 245, 245, 245 }, m_prgpEntries.first[i]);
       }
 
       iEntriesDisplayed++;
@@ -133,7 +133,7 @@ namespace FGUI
 
   void CListBox::Update()
   {
-    if (m_bIsDragging)
+    if (m_bIsDraggingThumb)
     {
       // calculate the amount of entries that will be drawn on the listbox
       int iCalculatedEntries = (m_dmSize.m_iHeight / m_iEntrySpacing);
@@ -169,7 +169,7 @@ namespace FGUI
       }
       else
       {
-        m_bIsDragging = false;
+        m_bIsDraggingThumb = false;
       }
     }
   }
@@ -184,7 +184,7 @@ namespace FGUI
 
     if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
     {
-      m_bIsDragging = true;
+      m_bIsDraggingThumb = true;
     }
 
     // entries displayed
@@ -201,10 +201,10 @@ namespace FGUI
       // select an entry
       if (FGUI::INPUT.IsCursorInArea(arEntryRegion))
       {
-        m_uiSelectedEntry = i;
+        m_ullSelectedEntry = i;
       }
 
-      if (m_uiSelectedEntry == i)
+      if (m_ullSelectedEntry == i)
       {
         if (m_fnctCallback)
         {

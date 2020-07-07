@@ -10,22 +10,17 @@
 #include <string>
 
 // library includes
-#include "form.hpp"
-#include "../dependencies/aliases.hpp"
-#include "../dependencies/definitions.hpp"
+#include "../misc/aliases.hpp"
+#include "../misc/definitions.hpp"
 
 namespace FGUI
 {
 
-  class CForm;
-  class CGroupBox;
-  class CTabs;
+  class CContainer;
 
   class CWidgets : public std::enable_shared_from_this<FGUI::CWidgets>
   {
-    friend class FGUI::CForm;
-    friend class FGUI::CTabs;
-    friend class FGUI::CGroupBox;
+    friend class FGUI::CContainer;
   public:
     // @brief: set the default position of the widget
     // @params: unsigned int x, unsigned int y = pixels coordinates (on the screen)
@@ -41,7 +36,7 @@ namespace FGUI
     // @params: unsigned int width, unsigned int height = width and height of the menu in pixels
     void SetSize(unsigned int width, unsigned int height);
 
-    // @brief: set the default size of the form
+    // @brief: set the default size of the widget
     // @params: FGUI::DIMENSION size = width and height of the menu in pixels
     void SetSize(FGUI::DIMENSION size);
 
@@ -56,7 +51,7 @@ namespace FGUI
     std::string GetTitle();
 
     // @brief: set the widget flags
-    // @params: int flags = widget default/custom flags
+    // @params: int flags = widget default/custom flag
     void SetFlags(int flags);
 
     // @brief: return true if the widget has the flag we're looking for
@@ -66,9 +61,6 @@ namespace FGUI
     // @brief: checks if the widget is unlocked (can be drawned)
     bool IsUnlocked();
 
-    // @brief: return an instance of the widget's parent form
-    std::shared_ptr<FGUI::CForm> GetParentForm();
-
     // @brief: set the widget that will behave like a medium (controller) for the parent widget
     // @params: std::shared_ptr<FGUI::CWidgets> medium = controller (element that will control the other)
     // unsigned int page = widget page
@@ -77,6 +69,10 @@ namespace FGUI
     // @brief: return an instance of the current medium (controller widget)
     std::shared_ptr<FGUI::CWidgets> GetMedium();
 
+    // @brief: set current widget page
+    // @params: unsigned int page = widget page
+    void SetPage(unsigned int page);
+
     // @brief: get current widget page
     unsigned int GetPage();
 
@@ -84,8 +80,8 @@ namespace FGUI
     int GetType();
 
     // @brief: set the default font of the widget
-    // @params: std::string family = font family name, unsigned int size = font size, bool bold = make the font bold,  int flags = font flags
-    void SetFont(std::string family, unsigned int size, bool bold = false, int flags = 0x0);
+    // @params: std::string family = font family name, unsigned int size = font size, int flags = font flags, bool bold = make the font bold
+    void SetFont(std::string family, unsigned int size, int flags, bool bold);
 
     // @brief: set the default font of the widget
     // @params: FGUI::WIDGET_FONT font = widget font struct
@@ -94,12 +90,15 @@ namespace FGUI
     // @brief: get the widget's default font
     FGUI::FONT GetFont();
 
-    // @brief: set the widget's identificator
-    // @args: std::string identificator = widget indentificator (widget variable on the config file)
-    void SetIdentificator(std::string identificator);
+    // @brief: get the container behaving like a window
+    std::shared_ptr<FGUI::CWidgets> GetWindowContainer();
 
-    // @brief: get the current widget identificator (variable)
-    std::string GetIdentificator();
+    // @brief: set the parent widget of the current widget
+    // @params: std::shared_ptr<FGUI::CWidgets> parent = parent widget
+    void SetParentWidget(std::shared_ptr<FGUI::CWidgets> parent);
+
+    // @brief: get the current parent widget
+    std::shared_ptr<FGUI::CWidgets> GetParentWidget();
 
   protected:
 
@@ -112,16 +111,13 @@ namespace FGUI
     // @brief: handle input inside the widget
     virtual void Input() = 0;
 
-  protected:
     int m_nFlags;
     int m_nType;
-    int m_iPage;
-    std::shared_ptr<FGUI::CForm> m_pParentForm;
-    std::shared_ptr<FGUI::CWidgets> m_pParentGroupBox;
-    std::shared_ptr<FGUI::CWidgets> m_pMedium;
-    std::string m_strIdentificator;
+    unsigned int m_uiPage;
+    std::shared_ptr<FGUI::CWidgets> m_pParentWidget;
+    std::shared_ptr<FGUI::CWidgets> m_pMediumWidget;
     std::string m_strTitle;
-    FGUI::FONT m_ulFont;
+    FGUI::FONT m_anyFont;
     FGUI::DIMENSION m_dmSize;
     FGUI::POINT m_ptPosition;
   };

@@ -6,6 +6,7 @@
 #define FGUI_DEFINITIONS_HH
 
 // includes
+#include <cmath>
 #include <string>
 #include <stdint.h>
 #include <algorithm>
@@ -73,23 +74,23 @@ namespace FGUI
       float flQ = brightness * (1.f - saturation * flF);
       float flT = brightness * (1.f - (saturation * (1.f - flF)));
 
-      if (flHue < 1)
+      if (flHue < 1.f)
       {
         return SColor_t((brightness * 255), (flT * 255), (flP * 255), alpha);
       }
-      else if (flHue < 2)
+      else if (flHue < 2.f)
       {
         return SColor_t((flQ * 255), (brightness * 255), (flP * 255), alpha);
       }
-      else if (flHue < 3)
+      else if (flHue < 3.f)
       {
         return SColor_t((flP * 255), (brightness * 255), (flT * 255), alpha);
       }
-      else if (flHue < 4)
+      else if (flHue < 4.f)
       {
         return SColor_t((flP * 255), (flQ * 255), (brightness * 255), alpha);
       }
-      else if (flHue < 5)
+      else if (flHue < 5.f)
       {
         return SColor_t((flT * 255), (flP * 255), (brightness * 255), alpha);
       }
@@ -237,25 +238,27 @@ namespace FGUI
   using WIDGET_TYPE = enum struct ESWidgetType_t : int {
     BUTTON = 0,
     CHECKBOX,
-    GROUPBOX,
-    COMBOBOX,
-    SLIDER,
-    KEYBINDER,
-    LISTBOX,
-    LABEL,
-    TEXTBOX,
     COLORLIST,
     COLORPICKER,
-    MULTIBOX
+    COMBOBOX,
+    CONTAINER,
+    KEYBINDER,
+    LABEL,
+    LISTBOX,
+    MULTIBOX,
+    SLIDER,
+    TABS,
+    TEXTBOX
   };
 
   using WIDGET_FLAG = enum struct ESWidgetFlag_t : int {
     DRAWABLE = 0x1,
     CLICKABLE = 0x2,
-    FOCUSABLE = 0x4,
-    SAVABLE = 0x8,
+    SAVABLE = 0x4,
+    FOCUSABLE = 0x8,
+    RESIZABLE = 0x10,
 
-    FULLSCREEN = 0x16 // this is exclusively for Forms
+    FULLSCREEN = 0x20 // this is exclusively for containers
   };
 
 } // namespace FGUI

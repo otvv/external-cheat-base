@@ -46,9 +46,9 @@ namespace FGUI
     std::pair<std::vector<std::string>, std::vector<bool>> GetMultiEntryInfo();
 
     // @brief: adds a new entry inside the multibox
-    // @params: std::string name = entry title, unsigned int value = entry custom value (use true or false if you are using the 'MULTI' style)
+    // @params: std::string name = entry title, bool value = entry custom value
     void AddEntry(std::string name, bool value = false);
-
+ 
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
 
@@ -60,11 +60,12 @@ namespace FGUI
 
   private:
     bool m_bIsOpened;
-    std::size_t m_uiSelectedEntry;
+    std::size_t m_ullSelectedEntry;
     int m_iEntrySpacing;
     std::pair<std::vector<std::string>, std::vector<bool>> m_prgpEntries;
     FGUI::DIMENSION m_dmBackupSize;
   };
+
 } // namespace FGUI
 
 #endif // FGUI_MULTIBOX_HH

@@ -13,12 +13,6 @@
     <ClCompile Include="FGUI\widgets\colorlist.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="FGUI\widgets\form.cpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="FGUI\widgets\groupbox.cpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="FGUI\widgets\keybinder.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
@@ -52,6 +46,9 @@
     <ClCompile Include="FGUI\widgets\multibox.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="FGUI\widgets\container.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="overlay.hpp">
@@ -69,15 +66,6 @@
     <ClInclude Include="FGUI\FGUI.hpp">
       <Filter>ex-client\FGUI</Filter>
     </ClInclude>
-    <ClInclude Include="FGUI\dependencies\aliases.hpp">
-      <Filter>ex-client\FGUI\dependencies</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\dependencies\builder.hpp">
-      <Filter>ex-client\FGUI\dependencies</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\dependencies\definitions.hpp">
-      <Filter>ex-client\FGUI\dependencies</Filter>
-    </ClInclude>
     <ClInclude Include="FGUI\widgets\button.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
@@ -85,12 +73,6 @@
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\widgets\colorlist.hpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\widgets\form.hpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\widgets\groupbox.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\widgets\keybinder.hpp">
@@ -120,9 +102,6 @@
     <ClInclude Include="menu.hpp">
       <Filter>ex-client\menu</Filter>
     </ClInclude>
-    <ClInclude Include="FGUI\dependencies\helpers.hpp">
-      <Filter>ex-client\FGUI\dependencies</Filter>
-    </ClInclude>
     <ClInclude Include="utilities.hpp">
       <Filter>ex-client\utilities</Filter>
     </ClInclude>
@@ -140,6 +119,18 @@
     </ClInclude>
     <ClInclude Include="FGUI\widgets\multibox.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\container.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\misc\aliases.hpp">
+      <Filter>ex-client\FGUI\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\misc\definitions.hpp">
+      <Filter>ex-client\FGUI\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\misc\helpers.hpp">
+      <Filter>ex-client\FGUI\misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,9 +152,6 @@
     <Filter Include="ex-client\FGUI\widgets">
       <UniqueIdentifier>{c962e831-c528-4779-8971-4e9759050e8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ex-client\FGUI\dependencies">
-      <UniqueIdentifier>{e35d7b12-27fb-4008-a455-88160dd817eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ex-client\input">
       <UniqueIdentifier>{bd639602-a15c-4e65-9be5-472693aec1ec}</UniqueIdentifier>
     </Filter>
@@ -172,6 +160,12 @@
     </Filter>
     <Filter Include="ex-client\utilities">
       <UniqueIdentifier>{41ff9744-c6b6-4d87-86c2-e103d206966e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI\misc">
+      <UniqueIdentifier>{e35d7b12-27fb-4008-a455-88160dd817eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI\dependencies">
+      <UniqueIdentifier>{3e9f80a9-23c0-42df-9b17-881b8a5b1c18}</UniqueIdentifier>
     </Filter>
     <Filter Include="ex-client\FGUI\dependencies\external">
       <UniqueIdentifier>{d2f44e33-a45e-4a46-b70f-1b0c3321029b}</UniqueIdentifier>

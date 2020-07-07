@@ -17,7 +17,7 @@ namespace FGUI
     m_flValue = 0.f;
     m_bIsDragging = false;
     m_rngBoundaries = { 0.f, 0.f };
-    m_ulFont = 0;
+    m_anyFont = 0;
     m_nType = static_cast<int>(WIDGET_TYPE::SLIDER);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -47,9 +47,9 @@ namespace FGUI
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
+    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
-    FGUI::DIMENSION dmValueTextSize = FGUI::RENDER.GetTextSize(m_ulFont, std::to_string(static_cast<int>(m_flValue)) + " " + m_strPrefix);
+    FGUI::DIMENSION dmValueTextSize = FGUI::RENDER.GetTextSize(m_anyFont, std::to_string(static_cast<int>(m_flValue)) + " " + m_strPrefix);
 
     // slider position ratio
     float flRatio = (m_flValue - m_rngBoundaries.m_flMin) / (m_rngBoundaries.m_flMax - m_rngBoundaries.m_flMin);
@@ -62,8 +62,8 @@ namespace FGUI
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + flLocation), (arWidgetRegion.m_iTop - 2), m_dmSliderThumbSize.m_iWidth, m_dmSliderThumbSize.m_iHeight, { 180, 25, 25 });
 
     // slider label & value
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_ulFont, { 35, 35, 35 }, m_strTitle);
-    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - dmValueTextSize.m_iWidth, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_ulFont, { 30, 30, 30 }, std::to_string(static_cast<int>(m_flValue)) + " " + m_strPrefix);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_anyFont, { 35, 35, 35 }, m_strTitle);
+    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - dmValueTextSize.m_iWidth, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_anyFont, { 30, 30, 30 }, std::to_string(static_cast<int>(m_flValue)) + " " + m_strPrefix);
   }
 
   void CSlider::Update()

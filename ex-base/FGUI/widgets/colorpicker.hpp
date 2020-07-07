@@ -32,7 +32,7 @@ namespace FGUI
     void Input() override;
   private:
     FGUI::COLOR m_clrDefault;
-    bool m_bOpened;
+    bool m_bIsOpened;
     FGUI::PRECISION m_prRelativePos;
   };
 

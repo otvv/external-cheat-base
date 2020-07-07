@@ -12,10 +12,10 @@
 
 int main(HINSTANCE _instance)
 {
-  // initialize FGUI's input system
+  // initialize input system
   INPUT_SYSTEM::OnEntryPoint();
 
-  // initialize FGUI's render manager
+  // initialize render manager
   RENDER::OnEntryPoint();
 
   // initialize the overlay

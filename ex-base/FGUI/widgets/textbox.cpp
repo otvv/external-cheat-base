@@ -11,12 +11,11 @@ namespace FGUI
   CTextBox::CTextBox()
   {
     m_strTitle = "TextBox";
-    m_ulFont = 0;
     m_dmSize = { 150, 20 };
-    m_strCustomText = "";
-    m_iLength = 24;
-    m_iInputPos = 0;
     m_bIsGettingKey = false;
+    m_strCustomText = "sample text";
+    m_iLength = 24;
+    m_anyFont = 0;
     m_nType = static_cast<int>(WIDGET_TYPE::TEXTBOX);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -40,7 +39,7 @@ namespace FGUI
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
+    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
     // textbox body
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion) || m_bIsGettingKey)
@@ -55,10 +54,10 @@ namespace FGUI
     }
 
     // textbox label
-    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_strTitle + ":");
+    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
 
     // textbox current text
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_strCustomText);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strCustomText);
   }
 
   void CTextBox::Update()
@@ -91,46 +90,38 @@ namespace FGUI
           std::transform(strKeyInput.begin(), strKeyInput.end(), strKeyInput.begin(), ::toupper);
         }
 
+        // input position
+        static unsigned int ulInputPos = 0;
+
         // insert text
         if (strKeyInput.length() == 1 && (static_cast<int>(m_strCustomText.length()) < m_iLength))
         {
-          m_strCustomText.insert(m_iInputPos, strKeyInput);
-          m_iInputPos++;
+          m_strCustomText.insert(ulInputPos, strKeyInput);
+          ulInputPos++;
         }
 
         if (m_strCustomText.length() > 0)
         {
-          if (key == KEY_BACKSPACE && (m_iInputPos > -1))
+          if (key == KEY_BACKSPACE && (ulInputPos > -1))
           {
-            m_strCustomText.erase(m_iInputPos, 1);
-            m_iInputPos--;
-
-            if (m_iInputPos < 0)
-            {
-              m_iInputPos = 0;
-            }
+            m_strCustomText.erase(ulInputPos, 1);
+            ulInputPos--;
           }
           else if (key == KEY_DELETE)
           {
             // clear text
             m_strCustomText.clear();
-
-            m_iInputPos = 0;
+            ulInputPos = 0;
           }
 
           // change the current input position
           if (key == KEY_LEFT)
           {
-            m_iInputPos--;
-
-            if (m_iInputPos < 0)
-            {
-              m_iInputPos = 0;
-            }
+            ulInputPos--;
           }
-          else if (key == KEY_RIGHT && m_iInputPos < (static_cast<int>(m_strCustomText.length())))
+          else if (key == KEY_RIGHT && ulInputPos < (static_cast<int>(m_strCustomText.length())))
           {
-            m_iInputPos++;
+            ulInputPos++;
           }
         }
       }

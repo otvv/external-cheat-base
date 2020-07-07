@@ -43,7 +43,7 @@ namespace FGUI
 
     // @brief: returns the current style of the label
     int GetStyle();
-
+  
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
 

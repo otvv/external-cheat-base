@@ -12,7 +12,7 @@ namespace FGUI
   {
     m_strTitle = "CheckBox";
     m_dmSize = { 16, 16 };
-    m_ulFont = 0;
+    m_anyFont = 0;
     m_bIsChecked = false;
     m_fnctCallback = nullptr;
     m_nType = static_cast<int>(WIDGET_TYPE::CHECKBOX);
@@ -60,7 +60,7 @@ namespace FGUI
     }
 
     // checkbox label
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight + 5), arWidgetRegion.m_iTop, m_ulFont, { 35, 35, 35 }, m_strTitle);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight + 5), arWidgetRegion.m_iTop, m_anyFont, { 35, 35, 35 }, m_strTitle);
   }
 
   void CCheckBox::Update()

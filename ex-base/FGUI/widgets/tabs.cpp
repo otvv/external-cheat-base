@@ -8,38 +8,76 @@
 namespace FGUI
 {
 
-  void CTabs::SetTitle(std::string title)
+  CTabs::CTabs()
   {
-    m_strTitle = title;
+    m_strTitle = "Tabs";
+    m_anyFont = 0;
+    m_ullSelectedEntry = 0;
+    m_dmSize = { 110, 25 };
+    m_iEntrySpacing = 113;
+    m_prgpTabs = {};
+    m_nType = static_cast<int>(WIDGET_TYPE::TABS);
+    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
   }
 
-  std::string CTabs::GetTitle()
+  void CTabs::AddTab(std::string title)
   {
-    return m_strTitle;
+    m_prgpTabs.emplace_back(title);
   }
 
-  void CTabs::AddWidget(std::shared_ptr<FGUI::CWidgets> widget)
+  void CTabs::SetIndex(std::size_t index)
   {
-    // assign parent form
-    widget->m_pParentForm = m_pParentForm;
-
-    // populate widget container
-    m_prgpWidgets.emplace_back(widget);
+    m_ullSelectedEntry = index;
   }
 
-  void CTabs::SetFont(std::string family, unsigned int size, int flags, bool bold)
+  std::size_t CTabs::GetIndex()
   {
-    FGUI::RENDER.CreateFont(m_ulFont, family, size, flags, bold);
+    return m_ullSelectedEntry;
   }
 
-  void CTabs::SetFont(FGUI::WIDGET_FONT font)
+  void CTabs::Geometry()
   {
-    FGUI::RENDER.CreateFont(m_ulFont, font.m_strFamily, font.m_iSize, font.m_nFlags, font.m_bBold);
+    // don't proceed if the tab container is empty
+    if (m_prgpTabs.empty())
+    {
+      return;
+    }
+
+    for (std::size_t i = 0; i < m_prgpTabs.size(); i++)
+    {
+      FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX + (static_cast<int>(i) * m_iEntrySpacing), GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+
+      if (m_ullSelectedEntry == i)
+      {
+        FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - 5), arWidgetRegion.m_iRight, (arWidgetRegion.m_iBottom + 5), { 45, 45, 45 });
+        FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabs[i]);
+      }
+      else
+      {
+        FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
+        FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabs[i]);
+      }
+    }
   }
 
-  FGUI::FONT CTabs::GetFont()
+  void CTabs::Update()
   {
-    return m_ulFont;
+    for (std::size_t i = 0; i < m_prgpTabs.size(); i++)
+    {
+      FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX + (static_cast<int>(i) * m_iEntrySpacing), GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+
+      if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
+      {
+        if (FGUI::INPUT.GetKeyPress(MOUSE_1))
+        {
+          m_ullSelectedEntry = i;
+        }
+      }
+    }
+  }
+
+  void CTabs::Input()
+  {
   }
 
 } // namespace FGUI

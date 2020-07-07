@@ -49,7 +49,7 @@ public:
   std::uintptr_t GetBaseAddress()
   {
     // get the module base address by its process id
-    m_ullBaseAddress = GetModule("process.exe", m_ulProcessID);
+    m_ullBaseAddress = GetModule("devenv.exe", m_ulProcessID);
 
     // give us full access to our process
     m_pProcessHandle = OpenProcess(PROCESS_ALL_ACCESS, 0, m_ulProcessID);
@@ -60,7 +60,7 @@ public:
   // get process id
   unsigned long GetProcessID()
   {
-    m_hWindowHandle = FindWindow(nullptr, "TARGET_WINDOW_NAME_HERE");
+    m_hWindowHandle = FindWindow(nullptr, "ex-base (Running) - Microsoft Visual Studio");
 
     // get the process id of the window handle 
     GetWindowThreadProcessId(m_hWindowHandle, &m_ulProcessID);

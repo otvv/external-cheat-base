@@ -63,7 +63,7 @@ namespace FGUI
   private:
     bool m_bIsOpened;
     int m_iEntrySpacing;
-    std::size_t m_uiSelectedEntry;
+    std::size_t m_ullSelectedEntry;
     std::pair<std::vector<std::string>, std::vector<int>> m_prgpEntries;
     std::function<void()> m_fnctCallback;
     FGUI::DIMENSION m_dmBackupSize;

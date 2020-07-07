@@ -11,7 +11,7 @@ namespace FGUI
   CKeyBinder::CKeyBinder()
   {
     m_strTitle = "KeyBinder";
-    m_ulFont = 0;
+    m_anyFont = 0;
     m_dmSize = { 150, 20 };
     m_uiKey = 0;
     m_strStatus = "None";
@@ -34,7 +34,7 @@ namespace FGUI
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_ulFont, m_strTitle);
+    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
     // keybinder body
     if (FGUI::INPUT.IsCursorInArea(arWidgetRegion) || m_bIsGettingKey)
@@ -49,10 +49,10 @@ namespace FGUI
     }
 
     // keybinder label
-    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_strTitle + ":");
+    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
 
     // keybinder current key
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_ulFont, { 35, 35, 35 }, m_strStatus);
+    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strStatus);
   }
 
   void CKeyBinder::Update()

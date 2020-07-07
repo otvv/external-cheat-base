@@ -153,7 +153,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -176,8 +176,7 @@
     <ClCompile Include="FGUI\widgets\checkbox.cpp" />
     <ClCompile Include="FGUI\widgets\colorlist.cpp" />
     <ClCompile Include="FGUI\widgets\colorpicker.cpp" />
-    <ClCompile Include="FGUI\widgets\form.cpp" />
-    <ClCompile Include="FGUI\widgets\groupbox.cpp" />
+    <ClCompile Include="FGUI\widgets\container.cpp" />
     <ClCompile Include="FGUI\widgets\keybinder.cpp" />
     <ClCompile Include="FGUI\widgets\label.cpp" />
     <ClCompile Include="FGUI\widgets\listbox.cpp" />
@@ -190,18 +189,16 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FGUI\dependencies\aliases.hpp" />
-    <ClInclude Include="FGUI\dependencies\builder.hpp" />
-    <ClInclude Include="FGUI\dependencies\definitions.hpp" />
     <ClInclude Include="FGUI\dependencies\external\tinyxml2.hpp" />
-    <ClInclude Include="FGUI\dependencies\helpers.hpp" />
     <ClInclude Include="FGUI\FGUI.hpp" />
+    <ClInclude Include="FGUI\misc\aliases.hpp" />
+    <ClInclude Include="FGUI\misc\definitions.hpp" />
+    <ClInclude Include="FGUI\misc\helpers.hpp" />
     <ClInclude Include="FGUI\widgets\button.hpp" />
     <ClInclude Include="FGUI\widgets\checkbox.hpp" />
     <ClInclude Include="FGUI\widgets\colorlist.hpp" />
     <ClInclude Include="FGUI\widgets\colorpicker.hpp" />
-    <ClInclude Include="FGUI\widgets\form.hpp" />
-    <ClInclude Include="FGUI\widgets\groupbox.hpp" />
+    <ClInclude Include="FGUI\widgets\container.hpp" />
     <ClInclude Include="FGUI\widgets\keybinder.hpp" />
     <ClInclude Include="FGUI\widgets\label.hpp" />
     <ClInclude Include="FGUI\widgets\listbox.hpp" />

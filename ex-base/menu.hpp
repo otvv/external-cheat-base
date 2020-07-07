@@ -8,92 +8,128 @@
 #define FGUI_IMPLEMENTATION
 #include "FGUI/FGUI.hpp"
 
-namespace WIDGETS
-{
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CButton>> Button;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CCheckBox>> CheckBox;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CColorList>> ColorList;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CColorPicker>> ColorPicker;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CComboBox>> ComboBox;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CForm>> Form;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CGroupBox>> GroupBox;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CKeyBinder>> KeyBinder;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CLabel>> Label;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CListBox>> ListBox;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CMultiBox>> MultiBox;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CSlider>> Slider;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CTabs>> Tab;
-  inline std::unordered_map<std::string, std::shared_ptr<FGUI::CTextBox>> TextBox;
-} // namespace WIDGETS
-
-void test()
-{
-  std::system("notepad");
-}
-
-void savetest()
-{
-   WIDGETS::Form["#form1"]->SaveState("config.xml");
-}
+std::shared_ptr<FGUI::CContainer> Container;
+std::shared_ptr<FGUI::CContainer> GroupBox;
+std::shared_ptr<FGUI::CContainer> GroupBox2;
+std::shared_ptr<FGUI::CTabs> Tabs;
+std::shared_ptr<FGUI::CComboBox> ComboBox;
+std::shared_ptr<FGUI::CComboBox> ComboBox2;
+std::shared_ptr<FGUI::CColorPicker> ColorPicker;
+std::shared_ptr<FGUI::CColorPicker> ColorPicker2;
+std::shared_ptr<FGUI::CMultiBox> MultiBox;
+std::shared_ptr<FGUI::CButton> Button;
+std::shared_ptr<FGUI::CColorList> ColorList;
 
 namespace WINDOW
 {
+  // TODO: multiple container support
   inline void OnSetupDevice()
   {
-    // builder pattern 
-    static FGUI::CBuilder Builder;
+    FGUI::WIDGET_FONT fontTitle = { "Tahoma", 12, true, 0x0 };
+    FGUI::WIDGET_FONT fontDefault = { "Tahoma", 13, false, 0x0 };
 
-    // initialize form
-    WIDGETS::Form["#form1"] = std::make_shared<FGUI::CForm>();
-    Builder.Widget(WIDGETS::Form["#form1"]).Title("Form 1").Position(200, 200).Size(735, 435).Key(VK_HOME).Font("Tahoma", 12, true, 128);
-    {
-      WIDGETS::Tab["#tab1"] = std::make_shared<FGUI::CTabs>();
-      Builder.Widget(WIDGETS::Tab["#tab1"]).Title("Aimbot").Font("Tahoma", 12, true, 128).Spawn(WIDGETS::Form["#form1"]);
-      {
-        WIDGETS::GroupBox["#groupbox1"] = std::make_shared<FGUI::CGroupBox>();
-        Builder.Widget(WIDGETS::GroupBox["#groupbox1"]).Title("Groupbox 1").Font("Tahoma", 12, true).Scrollbar(true).Position(15, 15).Size(235, 315).Spawn(WIDGETS::Tab["#tab1"]);
-        {
-          for (std::size_t i = 0; i < 30; i++)
-          {
-            WIDGETS::CheckBox["#checkbox" + std::to_string(i + 1)] = std::make_shared<FGUI::CCheckBox>();
-            Builder.Widget(WIDGETS::CheckBox["#checkbox" + std::to_string(i + 1)]).Title("Checkbox" + std::to_string(i + 1)).Identificator("vars.checkbox" + std::to_string(i + 1)).Font("Tahoma", 13).Position(15, 15 + (i * 25)).Spawn(WIDGETS::GroupBox["#groupbox1"], WIDGETS::Tab["#tab1"]);
-          }
-        }
+    Container = std::make_shared<FGUI::CContainer>();
+    Container->SetSize(735, 435);
+    Container->SetPosition(200, 200);
+    Container->SetFont(fontTitle);
+    Container->SetTitle("Container 1");
+    Container->SetKey(VK_HOME);
 
-        WIDGETS::GroupBox["#groupbox2"] = std::make_shared<FGUI::CGroupBox>();
-        Builder.Widget(WIDGETS::GroupBox["#groupbox2"]).Title("Groupbox 2").Font("Tahoma", 12, true).Position(30 + 235, 15).Size(235, 315).Spawn(WIDGETS::Tab["#tab1"]);
-        {
-          WIDGETS::ColorPicker["#colorpicker1"] = std::make_shared<FGUI::CColorPicker>();
-          Builder.Widget(WIDGETS::ColorPicker["#colorpicker1"]).Identificator("vars.colorpicker1").Font("Tahoma", 13).Position(15, 15).Color(255, 75, 75).Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
+    Tabs = std::make_shared<FGUI::CTabs>();
+    Tabs->SetPosition(0, 16);
+    Tabs->SetFont(fontTitle);
+    Tabs->AddTab("Tab 1");
+    Tabs->AddTab("Tab 2");
+    Tabs->AddTab("Tab 3");
+    Tabs->AddTab("Tab 4");
+    Tabs->AddTab("Tab 5");
+    Container->AddWidget(Tabs, false);
 
-          WIDGETS::Label["#label1"] = std::make_shared<FGUI::CLabel>();
-          Builder.Widget(WIDGETS::Label["#label1"]).Title("ColorPicker 1").Color(35, 35, 35).Callback(test).Style(static_cast<int>(FGUI::LABEL_STYLE::LINK)).Position(45, 15).Font("Tahoma", 13).Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
+    ColorList = std::make_shared<FGUI::CColorList>();
+    ColorList->SetSize(695, 305);
+    ColorList->SetPosition(15, 55);
+    ColorList->SetFont(fontDefault);
+    ColorList->SetTitle("ColorList 1");
+    ColorList->AddColor("Color 1", { 255, 0, 0 }, false);
+    ColorList->AddColor("Color 2", { 0, 255, 0 }, false);
+    ColorList->AddColor("Color 3", { 0, 0, 255 }, false);
+    ColorList->AddColor("Color 4", { 0, 0, 255 }, false);
+    ColorList->AddColor("Color 5", { 0, 255, 0 }, false);
+    ColorList->AddColor("Color 6", { 255, 0, 0 }, false);
+    ColorList->SetMedium(Tabs, 1);
+    Container->AddWidget(ColorList, false);
 
-          WIDGETS::KeyBinder["#keybinder1"] = std::make_shared<FGUI::CKeyBinder>();
-          Builder.Widget(WIDGETS::KeyBinder["#keybinder1"]).Title("KeyBinder 1").Identificator("vars.keybinder1").Font("Tahoma", 13).Position(15, 15 + 25).Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
+    GroupBox = std::make_shared<FGUI::CContainer>();
+    GroupBox->SetSize(280, 305);
+    GroupBox->SetPosition(15, 55);
+    GroupBox->SetFont(fontTitle);
+    GroupBox->SetTitle("GroupBox");
+    GroupBox->SetMedium(Tabs, 2);
+    Container->AddWidget(GroupBox, false);
 
-          WIDGETS::Slider["#slider1"] = std::make_shared<FGUI::CSlider>();
-          Builder.Widget(WIDGETS::Slider["#slider1"]).Title("Slider 1").Font("Tahoma", 13).Identificator("vars.slider1").Position(15, 40 + 40).Range(0.f, 100.f).Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
+    ComboBox = std::make_shared<FGUI::CComboBox>();
+    ComboBox->SetPosition(15, 15);
+    ComboBox->SetFont(fontDefault);
+    ComboBox->SetTitle("ComboBox");
+    ComboBox->AddEntry("Entry 1");
+    ComboBox->AddEntry("Entry 2");
+    ComboBox->AddEntry("Entry 3");
+    ComboBox->AddEntry("Entry 4");
+    ComboBox->AddEntry("Entry 5");
+    GroupBox->AddWidget(ComboBox, false);
 
-          WIDGETS::MultiBox["#multibox1"] = std::make_shared<FGUI::CMultiBox>();
-          Builder.Widget(WIDGETS::MultiBox["#multibox1"]).Title("MultiBox 1").Font("Tahoma", 13).Identificator("vars.multibox1").Position(15, 80 + 15).Entry("Entry 1").Entry("Entry 2").Entry("Entry 3").Entry("Entry 4").Entry("Entry 5").Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
-          
-          WIDGETS::ComboBox["#combobox1"] = std::make_shared<FGUI::CComboBox>();
-          Builder.Widget(WIDGETS::ComboBox["#combobox1"]).Title("ComboBox 1").Font("Tahoma", 13).Identificator("vars.combobox1").Position(15, 105 + 20).Entry("Entry 1").Entry("Entry 2").Entry("Entry 3").Entry("Entry 4").Entry("Entry 5").Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
+    ColorPicker = std::make_shared<FGUI::CColorPicker>();
+    ColorPicker->SetPosition(200, 15);
+    ColorPicker->SetFont(fontDefault);
+    ColorPicker->SetTitle("ColorPicker");
+    ColorPicker->SetColor({ 255, 75, 75 });
+    GroupBox->AddWidget(ColorPicker, false);
 
-          WIDGETS::Button["#button1"] = std::make_shared<FGUI::CButton>();
-          Builder.Widget(WIDGETS::Button["#button1"]).Title("Button 1").Font("Tahoma", 12, true).Position(15, 125 + 20).Callback(savetest).Spawn(WIDGETS::GroupBox["#groupbox2"], WIDGETS::Tab["#tab1"]);
-        }
-      }
+    MultiBox = std::make_shared<FGUI::CMultiBox>();
+    MultiBox->SetPosition(15, 15 + 25);
+    MultiBox->SetFont(fontDefault);
+    MultiBox->SetTitle("MultiBox");
+    MultiBox->AddEntry("Entry 1");
+    MultiBox->AddEntry("Entry 2");
+    MultiBox->AddEntry("Entry 3");
+    MultiBox->AddEntry("Entry 4");
+    MultiBox->AddEntry("Entry 5");
+    GroupBox->AddWidget(MultiBox, true);
 
-      WIDGETS::Tab["#tab2"] = std::make_shared<FGUI::CTabs>();
-      Builder.Widget(WIDGETS::Tab["#tab2"]).Title("Configs").Font("Tahoma", 12, true, 128).Spawn(WIDGETS::Form["#form1"]);
-      {
-        WIDGETS::ColorList["#colorlist1"] = std::make_shared<FGUI::CColorList>();
-        Builder.Widget(WIDGETS::ColorList["#colorlist1"]).Identificator("vars.colorlist1").Title("ColorList").Font("Tahoma", 13).Position(15, 15).Size(705, 315)
-          .Color("Color 1", 255, 75, 75)
-          .Color("Color 2", 25, 100, 255).Spawn(WIDGETS::Tab["#tab2"]);
-      }
-    }
+    Button = std::make_shared<FGUI::CButton>();
+    Button->SetPosition(15, 40 + 25);
+    Button->SetFont(fontTitle);
+    Button->SetTitle("Button");
+    GroupBox->AddWidget(Button, true);
+
+    //
+    //
+
+    GroupBox2 = std::make_shared<FGUI::CContainer>();
+    GroupBox2->SetSize(280, 305);
+    GroupBox2->SetPosition(15, 55);
+    GroupBox2->SetFont(fontTitle);
+    GroupBox2->SetTitle("GroupBox 2");
+    GroupBox2->SetMedium(Tabs, 3);
+    Container->AddWidget(GroupBox2, false);
+
+    ComboBox2 = std::make_shared<FGUI::CComboBox>();
+    ComboBox2->SetPosition(15, 15);
+    ComboBox2->SetFont(fontDefault);
+    ComboBox2->SetTitle("ComboBox");
+    ComboBox2->AddEntry("Entry 1");
+    ComboBox2->AddEntry("Entry 2");
+    ComboBox2->AddEntry("Entry 3");
+    ComboBox2->AddEntry("Entry 4");
+    ComboBox2->AddEntry("Entry 5");
+    GroupBox2->AddWidget(ComboBox2, false);
+
+    ColorPicker2 = std::make_shared<FGUI::CColorPicker>();
+    ColorPicker2->SetPosition(200, 15);
+    ColorPicker2->SetFont(fontDefault);
+    ColorPicker2->SetTitle("ColorPicker");
+    ColorPicker2->SetColor({ 255, 75, 75 });
+    GroupBox2->AddWidget(ColorPicker2, false);
   }
+
 } // namespace WINDOW

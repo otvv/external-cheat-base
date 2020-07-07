@@ -42,7 +42,6 @@ namespace FGUI
   private:
     std::string m_strCustomText;
     int m_iLength;
-    int m_iInputPos;
     bool m_bIsGettingKey;
     FGUI::KEY_STRINGS m_ksStrings;
   };

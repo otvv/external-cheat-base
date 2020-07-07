@@ -7,54 +7,42 @@
 
 // includes
 #include <vector>
-#include <memory>
-#include <string>
 
 // library includes
 #include "widgets.hpp"
-#include "../dependencies/aliases.hpp"
-#include "../dependencies/definitions.hpp"
 
 namespace FGUI
 {
 
-  class CForm;
-  class CGroupBox;
-  class CWidgets;
-
-  class CTabs
+  class CTabs : public FGUI::CWidgets
   {
-    friend class FGUI::CForm;
-    friend class FGUI::CGroupBox;
   public:
+    CTabs();
 
-    // @brief: sets a custom title for the tab
-    // @params: std::string title = title of the tab
-    void SetTitle(std::string title);
+    // @brief: adds a new tab to the tab container
+    // @params: std::string title = tab title  
+    void AddTab(std::string title);
 
-    // @brief: get the tab's default title
-    std::string GetTitle();
+    // @brief: sets a selected tab
+    // @params: std::size_t index = tab to select
+    void SetIndex(std::size_t index);
 
-    // @brief: insert a new widget inside the tab
-    // @params: std::shared_ptr<FGUI::CWidgets> widget instance (pointer)
-    void AddWidget(std::shared_ptr<FGUI::CWidgets> widget);
+    // @brief: returns the current selected tab
+    std::size_t GetIndex();
 
-    // @brief: set the default font of the tab
-    // @params: std::string family = font family name, unsigned int size = font size, int flags = font flags, bool bold = make the font bold
-    void SetFont(std::string family, unsigned int size, int flags = 0x0, bool bold = false);
+    // @brief: populate widget geometry (draw widget)
+    void Geometry() override;
 
-    // @brief: set the default font of the tab
-    // @params: FGUI::WIDGET_FONT font = widget font struct
-    void SetFont(FGUI::WIDGET_FONT font);
+    // @brief: handle update operations on the widget
+    void Update() override;
 
-    // @brief: get the tab's default font
-    FGUI::FONT GetFont();
+    // @brief: handle input inside the widget
+    void Input() override;
 
   private:
-    std::string m_strTitle;
-    std::shared_ptr<FGUI::CForm> m_pParentForm;
-    std::vector<std::shared_ptr<FGUI::CWidgets>> m_prgpWidgets;
-    FGUI::FONT m_ulFont;
+    int m_iEntrySpacing;
+    std::size_t m_ullSelectedEntry;
+    std::vector<std::string> m_prgpTabs;
   };
 
 } // namespace FGUI

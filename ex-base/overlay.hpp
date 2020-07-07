@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <thread>
 #include <dwmapi.h>
+#include <fstream>
 
 #include "menu.hpp"
 #include "input.hpp"
@@ -34,13 +35,12 @@ namespace OVERLAY
     RENDER::m_pDevice->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
     RENDER::m_pDevice->BeginScene();
 
-    // handle device states
-    RENDER::RunDeviceStates();
+    // update device state
+    RENDER::UpdateDeviceState();
 
     if (m_hwndTarget == GetForegroundWindow())
     {
-      // menu 
-      WIDGETS::Form["#form1"]->Render();
+      Container->Render();
     }
 
     RENDER::m_pDevice->EndScene();
@@ -58,7 +58,7 @@ namespace OVERLAY
       DwmExtendFrameIntoClientArea(m_hwndOverlay, reinterpret_cast<MARGINS*>(&m_arOverlayRegion));
       break;
     case WM_MOUSEWHEEL:
-      INPUT_SYSTEM::m_iCursorWheelDelta = GET_WHEEL_DELTA_WPARAM(_wparam);
+      INPUT_SYSTEM::m_iCursorWheelDelta = -GET_WHEEL_DELTA_WPARAM(_wparam);
       break;
     case WM_DESTROY:
       PostQuitMessage(1);
@@ -130,7 +130,7 @@ namespace OVERLAY
       // create fonts
       RENDER::CreateFontA(FONTS::Title, "Tahoma", 12, 0x0, true);
 
-      // initialize form
+      // initialize window
       WINDOW::OnSetupDevice();
 
       return true;
@@ -174,7 +174,7 @@ namespace OVERLAY
     wcsexWindow.lpszMenuName = NULL;
 
     // tell the window to re-draw when resized
-    wcsexWindow.style = CS_VREDRAW | CS_HREDRAW;
+    wcsexWindow.style = (CS_VREDRAW | CS_HREDRAW);
 
     RegisterClassEx(&wcsexWindow);
 
@@ -196,11 +196,11 @@ namespace OVERLAY
       // show window
       ShowWindow(m_hwndOverlay, SW_SHOW);
     }
+
     // create d3d9 device
     SetupDevice(m_hwndOverlay);
 
     // main message loop
-
     static MSG msgOverlay = { NULL };
     while (WM_QUIT != msgOverlay.message)
     {
@@ -221,7 +221,7 @@ namespace OVERLAY
     // overlay settings
     m_dmSize = { RENDER::GetScreenSize() };
     m_strOverlayWindowName = "[external base] - External Overlay";
-    m_strTargetWindowName = "TARGET_WINDOW_NAME_HERE";
+    m_strTargetWindowName = "ex-base (Running) - Microsoft Visual Studio";
     m_arOverlayRegion = { 0, 0, m_dmSize.m_iWidth, m_dmSize.m_iWidth };
 
     // setup overlay

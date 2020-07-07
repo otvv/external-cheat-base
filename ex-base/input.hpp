@@ -7,8 +7,8 @@
 
 #include <array>
 
-#include "FGUI/dependencies/definitions.hpp"
-#include "FGUI/dependencies/aliases.hpp"
+#include "FGUI/misc/definitions.hpp"
+#include "FGUI/misc/aliases.hpp"
 
 namespace INPUT_SYSTEM
 {
