@@ -27,23 +27,13 @@ namespace FGUI
     // @brief: get the multibox state (dropdown list enabled or not)
     bool GetState();
 
-    // @brief: set the multibox selected index
-    // @params: std::size_t index = selected index (starting with 0)
-    void SetIndex(std::size_t index);
-
-    // @brief: get the multibox selected index (entry)
-    std::size_t GetIndex();
-
     // @brief: sets a custom value to a specific entry on the dropdown
-    // @params: std::size_t index = entry index, unsigned int value = custom value
-    void SetValue(std::size_t index, unsigned int value);
+    // @params: std::size_t index = entry index, bool state = entry state
+    void SetValue(std::size_t index, bool state);
 
     // @brief: get the multibox selected entry custom value or state
     // @params: std::size_t index = index of the entry that you want to get the value
     std::size_t GetValue(std::size_t index = 0);
-
-    // @brief: get info about the multibox entries (name, value/state)
-    std::pair<std::vector<std::string>, std::vector<bool>> GetMultiEntryInfo();
 
     // @brief: adds a new entry inside the multibox
     // @params: std::string name = entry title, bool value = entry custom value
@@ -58,9 +48,16 @@ namespace FGUI
     // @brief: handle input inside the widget
     void Input() override;
 
+    // @brief: save the widget state
+    // @params: nlohmann::json module = json module 
+    void Save(nlohmann::json& module) override;
+
+    // @brief: load the widget state
+    // @params: std::string file = file name/path to load
+    void Load(std::string file) override;
+
   private:
     bool m_bIsOpened;
-    std::size_t m_ullSelectedEntry;
     int m_iEntrySpacing;
     std::pair<std::vector<std::string>, std::vector<bool>> m_prgpEntries;
     FGUI::DIMENSION m_dmBackupSize;

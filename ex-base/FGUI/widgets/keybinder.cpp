@@ -103,4 +103,34 @@ namespace FGUI
     }
   }
 
+  void CKeyBinder::Save(nlohmann::json& module)
+  {
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    module[strFormatedWidgetName] = m_uiKey;
+  }
+
+  void CKeyBinder::Load(std::string file)
+  {
+    nlohmann::json jsModule;
+
+    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
+
+    if (ifsFileToLoad.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    jsModule = nlohmann::json::parse(ifsFileToLoad);
+
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    // change widget default key to the one stored on file
+    m_uiKey = jsModule[strFormatedWidgetName];
+  }
+
 } // namespace FGUI

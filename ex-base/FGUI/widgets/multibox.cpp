@@ -15,7 +15,6 @@ namespace FGUI
     m_dmSize = { 150, 20 };
     m_dmBackupSize = { m_dmSize };
     m_iEntrySpacing = 20;
-    m_ullSelectedEntry = 0;
     m_prgpEntries = {};
     m_bIsOpened = false;
     m_nType = static_cast<int>(WIDGET_TYPE::MULTIBOX);
@@ -32,17 +31,7 @@ namespace FGUI
     return m_bIsOpened;
   }
 
-  void CMultiBox::SetIndex(std::size_t index)
-  {
-    m_ullSelectedEntry = index;
-  }
-
-  std::size_t CMultiBox::GetIndex()
-  {
-    return m_ullSelectedEntry;
-  }
-
-  void CMultiBox::SetValue(std::size_t index, unsigned int value)
+  void CMultiBox::SetValue(std::size_t index, bool value)
   {
     m_prgpEntries.second[index] = value;
   }
@@ -50,11 +39,6 @@ namespace FGUI
   std::size_t CMultiBox::GetValue(std::size_t index)
   {
     return m_prgpEntries.second[index];
-  }
-
-  std::pair<std::vector<std::string>, std::vector<bool>> CMultiBox::GetMultiEntryInfo()
-  {
-    return m_prgpEntries;
   }
 
   void CMultiBox::AddEntry(std::string name, bool value)
@@ -208,6 +192,52 @@ namespace FGUI
           } 
         }
       }
+    }
+  }
+
+  void CMultiBox::Save(nlohmann::json& module)
+  {
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    for (std::size_t i = 0; i < m_prgpEntries.first.size(); i++)
+    {
+      bool bDummyChecked = m_prgpEntries.second[i];
+
+      // remove spaces from the entry name
+      std::string strFormatedEntryName = m_prgpEntries.first[i];
+      std::replace(strFormatedEntryName.begin(), strFormatedEntryName.end(), ' ', '_');
+
+      module[strFormatedWidgetName][strFormatedEntryName] = bDummyChecked;
+    }
+  }
+
+  void CMultiBox::Load(std::string file)
+  {
+    nlohmann::json jsModule;
+
+    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
+
+    if (ifsFileToLoad.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    jsModule = nlohmann::json::parse(ifsFileToLoad);
+
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    for (std::size_t i = 0; i < m_prgpEntries.first.size(); i++)
+    {
+      // remove spaces from the entry name
+      std::string strFormatedEntryName = m_prgpEntries.first[i];
+      std::replace(strFormatedEntryName.begin(), strFormatedEntryName.end(), ' ', '_');
+
+      // change widget state to the one stored on file
+      SetValue(i, jsModule[strFormatedWidgetName][strFormatedEntryName]);
     }
   }
 

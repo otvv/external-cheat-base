@@ -44,6 +44,33 @@ namespace FGUI
     }
   }
 
+  void CContainer::SaveToFile(std::string file)
+  {
+    nlohmann::json jsModule;
+
+    // don't proceed if the container doesn't have any widgets
+    if (m_prgpWidgets.empty())
+    {
+      return;
+    }
+
+    for (std::shared_ptr<FGUI::CWidgets> pWidgets : m_prgpWidgets)
+    {
+      // save widget state
+      pWidgets->Save(jsModule);
+    }
+
+    std::ofstream ofsFileToSave(file);
+
+    if (ofsFileToSave.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    // write the file
+    ofsFileToSave << std::setw(4) << jsModule << std::endl;
+  }
+
   void CContainer::SetState(bool state)
   {
     m_bIsOpened = state;
@@ -91,14 +118,6 @@ namespace FGUI
   void CContainer::AddCallback(std::function<void()> callback)
   {
     m_fnctCallback = callback;
-  }
-
-  void CContainer::SaveState(std::string file_name)
-  {
-  }
-
-  void CContainer::LoadState(std::string file_name)
-  {
   }
 
   void CContainer::SetKey(unsigned int key)
@@ -236,7 +255,8 @@ namespace FGUI
         if (m_bScrollBarState)
         {
           // check if the widgets are inside the boundaries of the groupbox
-          if (pWidgets->GetAbsolutePosition().m_iY <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) >= GetAbsolutePosition().m_iY)
+          if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight)
+            && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
           {
             pWidgets->Geometry();
           }
@@ -257,7 +277,8 @@ namespace FGUI
         if (m_bScrollBarState)
         {
           // check if the widgets are inside the boundaries of the groupbox
-          if (pWidgetToSkip->GetAbsolutePosition().m_iY <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) >= GetAbsolutePosition().m_iY)
+          if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight)
+            && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
           {
             pWidgetToSkip->Geometry();
           }
@@ -367,18 +388,41 @@ namespace FGUI
 
         FGUI::AREA arSkippedWidgetRegion = { pWidgetToSkip->GetAbsolutePosition().m_iX, pWidgetToSkip->GetAbsolutePosition().m_iY, pWidgetToSkip->GetSize().m_iWidth, pWidgetToSkip->GetSize().m_iHeight };
 
-        pWidgetToSkip->Update();
-
-        // check if the skipped widget can be clicked
-        if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1) && bSkipWidget)
+        if (m_bScrollBarState)
         {
-          pWidgetToSkip->Input();
+          if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight)
+            && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
+          {
+            pWidgetToSkip->Update();
 
-          // loose unfocus
-          SetFocusedWidget(nullptr);
+            // check if the skipped widget can be clicked
+            if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1) && bSkipWidget)
+            {
+              pWidgetToSkip->Input();
 
-          // reset focused widget state
-          pWidgetToSkip.reset();
+              // loose unfocus
+              SetFocusedWidget(nullptr);
+
+              // reset focused widget state
+              pWidgetToSkip.reset();
+            }
+          }
+        }
+        else
+        {
+          pWidgetToSkip->Update();
+
+          // check if the skipped widget can be clicked
+          if (GetFocusedWidget()->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1) && bSkipWidget)
+          {
+            pWidgetToSkip->Input();
+
+            // loose unfocus
+            SetFocusedWidget(nullptr);
+
+            // reset focused widget state
+            pWidgetToSkip.reset();
+          }
         }
       }
     }
@@ -400,20 +444,46 @@ namespace FGUI
 
         FGUI::AREA arWidgetRegion = { pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight };
 
-        pWidgets->Update();
-
-        // check if the widget can be clicked
-        if (pWidgets->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1) && !bSkipWidget)
+        if (m_bScrollBarState)
         {
-          pWidgets->Input();
+          if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight)
+            && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
+          {
+            pWidgets->Update();
 
-          if (pWidgets->GetFlags(WIDGET_FLAG::FOCUSABLE))
-          {
-            SetFocusedWidget(pWidgets);
+            // check if the widget can be clicked
+            if (pWidgets->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1) && !bSkipWidget)
+            {
+              pWidgets->Input();
+
+              if (pWidgets->GetFlags(WIDGET_FLAG::FOCUSABLE))
+              {
+                SetFocusedWidget(pWidgets);
+              }
+              else
+              {
+                SetFocusedWidget(nullptr);
+              }
+            }
           }
-          else
+        }
+        else
+        {
+          pWidgets->Update();
+
+          // check if the widget can be clicked
+          if (pWidgets->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1) && !bSkipWidget)
           {
-            SetFocusedWidget(nullptr);
+            pWidgets->Input();
+
+            if (pWidgets->GetFlags(WIDGET_FLAG::FOCUSABLE))
+            {
+              SetFocusedWidget(pWidgets);
+            }
+            else
+            {
+              SetFocusedWidget(nullptr);
+            }
           }
         }
       }
@@ -422,6 +492,58 @@ namespace FGUI
 
   void CContainer::Input()
   {
+  }
+
+  void CContainer::Save(nlohmann::json& module)
+  {
+    // don't proceed if the container doesn't have any widgets
+    if (m_prgpWidgets.empty())
+    {
+      return;
+    }
+
+    for (std::shared_ptr<FGUI::CWidgets> pWidgets : m_prgpWidgets)
+    {
+      if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::CONTAINER))
+      {
+        pWidgets->Save(module);
+      }
+      else if (pWidgets->GetFlags(WIDGET_FLAG::SAVABLE)) // check if the widget can be saved
+      {
+        pWidgets->Save(module);
+      }
+    }
+  }
+
+  void CContainer::Load(std::string file)
+  {
+    if (m_prgpWidgets.empty())
+    {
+      return;
+    }
+
+    nlohmann::json jsModule;
+
+    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
+
+    if (ifsFileToLoad.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    jsModule = nlohmann::json::parse(ifsFileToLoad);
+    
+    for (std::shared_ptr<FGUI::CWidgets> pWidgets : m_prgpWidgets)
+    {
+      if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::CONTAINER))
+      {
+        pWidgets->Load(file);
+      }
+      else if (pWidgets->GetFlags(WIDGET_FLAG::SAVABLE)) // check if the widget can be loaded
+      {
+        pWidgets->Load(file);
+      }
+    }
   }
 
 } // namespace FGUI

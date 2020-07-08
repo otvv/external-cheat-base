@@ -101,11 +101,6 @@ namespace FGUI
     return m_prgpColorInfo[index].m_clrFirst;
   }
 
-  std::vector<FGUI::COLOR_INFO> CColorList::GetColorInfo()
-  {
-    return m_prgpColorInfo;
-  }
-
   void CColorList::Geometry()
   {
     // color gap
@@ -426,6 +421,55 @@ namespace FGUI
       }
 
       iEntriesDisplayed++;
+    }
+  }
+
+  void CColorList::Save(nlohmann::json& module)
+  {
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    for (std::size_t i = 0; i < m_prgpColorInfo.size(); i++)
+    {
+      // remove spaces from the color identificator
+      std::string strFormatedColorIdentificator = m_prgpColorInfo[i].m_strIdentificator;
+      std::replace(strFormatedColorIdentificator.begin(), strFormatedColorIdentificator.end(), ' ', '_');
+
+      module[strFormatedWidgetName][strFormatedColorIdentificator]["red"] = m_prgpColorInfo[i].m_clrFirst.m_ucRed;
+      module[strFormatedWidgetName][strFormatedColorIdentificator]["green"] = m_prgpColorInfo[i].m_clrFirst.m_ucGreen;
+      module[strFormatedWidgetName][strFormatedColorIdentificator]["blue"] = m_prgpColorInfo[i].m_clrFirst.m_ucBlue;
+      module[strFormatedWidgetName][strFormatedColorIdentificator]["alpha"] = m_prgpColorInfo[i].m_clrFirst.m_ucAlpha;
+    }
+  }
+
+  void CColorList::Load(std::string file)
+  {
+    nlohmann::json jsModule;
+
+    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
+
+    if (ifsFileToLoad.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    jsModule = nlohmann::json::parse(ifsFileToLoad);
+
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    for (std::size_t i = 0; i < m_prgpColorInfo.size(); i++)
+    {
+      // remove spaces from the color identificator
+      std::string strFormatedColorIdentificator = m_prgpColorInfo[i].m_strIdentificator;
+      std::replace(strFormatedColorIdentificator.begin(), strFormatedColorIdentificator.end(), ' ', '_');
+
+      m_prgpColorInfo[i].m_clrFirst.m_ucRed = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["red"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucGreen = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["green"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucBlue = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["blue"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucAlpha = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["alpha"];
     }
   }
 

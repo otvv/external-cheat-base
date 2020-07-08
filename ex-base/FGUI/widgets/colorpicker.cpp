@@ -158,4 +158,41 @@ namespace FGUI
     }
   }
 
+  void CColorPicker::Save(nlohmann::json& module)
+  {
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    module[strFormatedWidgetName]["red"] = m_clrDefault.m_ucRed;
+    module[strFormatedWidgetName]["green"] = m_clrDefault.m_ucGreen;
+    module[strFormatedWidgetName]["blue"] = m_clrDefault.m_ucBlue;
+    module[strFormatedWidgetName]["alpha"] = m_clrDefault.m_ucAlpha;
+  }
+
+  void CColorPicker::Load(std::string file)
+  {
+    nlohmann::json jsModule;
+
+    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
+
+    if (ifsFileToLoad.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    jsModule = nlohmann::json::parse(ifsFileToLoad);
+
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    // change widget color to the one stored on file
+    m_clrDefault.m_ucRed = jsModule[strFormatedWidgetName]["red"];
+    m_clrDefault.m_ucGreen = jsModule[strFormatedWidgetName]["green"];
+    m_clrDefault.m_ucBlue = jsModule[strFormatedWidgetName]["blue"];
+    m_clrDefault.m_ucAlpha = jsModule[strFormatedWidgetName]["alpha"];
+  }
+
+
 } // namespace FGUI

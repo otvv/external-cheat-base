@@ -138,4 +138,34 @@ namespace FGUI
     }
   }
 
+  void CTextBox::Save(nlohmann::json& module)
+  {
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    module[strFormatedWidgetName] = m_strCustomText;
+  }
+
+  void CTextBox::Load(std::string file)
+  {
+    nlohmann::json jsModule;
+
+    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
+
+    if (ifsFileToLoad.fail())
+    {
+      return; // TODO: handle this properly
+    }
+
+    jsModule = nlohmann::json::parse(ifsFileToLoad);
+
+    // remove spaces from widget name
+    std::string strFormatedWidgetName = GetTitle();
+    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+
+    // change widget text to the one stored on file
+    m_strCustomText = jsModule[strFormatedWidgetName];
+  }
+
 } // namespace FGUI

@@ -8,14 +8,17 @@
 // includes
 #include <memory>
 #include <string>
+#include <fstream>
 
 // library includes
 #include "../misc/aliases.hpp"
 #include "../misc/definitions.hpp"
 
+// external dependencies
+#include "../dependencies/external/json.hpp"
+
 namespace FGUI
 {
-
   class CContainer;
 
   class CWidgets : public std::enable_shared_from_this<FGUI::CWidgets>
@@ -110,6 +113,14 @@ namespace FGUI
 
     // @brief: handle input inside the widget
     virtual void Input() = 0;
+
+    // @brief: save the widget state
+    // @params: nlohmann::json module = json module 
+    virtual void Save(nlohmann::json& module) = 0;
+
+    // @brief: load the widget state
+    // @params: std::string file = file name/path to load
+    virtual void Load(std::string file) = 0;
 
     int m_nFlags;
     int m_nType;

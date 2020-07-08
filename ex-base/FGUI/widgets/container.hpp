@@ -7,6 +7,7 @@
 
 // includes
 #include <vector>
+#include <iomanip>
 
 // library includes
 #include "widgets.hpp"
@@ -20,6 +21,10 @@ namespace FGUI
 
     // @brief: handle container rendering
     void Render();
+
+    // @brief: save widget state into a file
+    // @params: std::string file = file name/path
+    void SaveToFile(std::string file);
 
     // @brief: toggles on or off the container
     // @params: bool state = container state (on/off)
@@ -49,14 +54,6 @@ namespace FGUI
     // @params: std::function<void()> callback = function instance
     void AddCallback(std::function<void()> callback);
 
-    // @brief: save widget state into a file (config)
-    // @params: std::string file = config name/location
-    void SaveState(std::string file_name);
-
-    // @brief: load widget state from a file (config)
-    // @params: std::string file_name = config name/location
-    void LoadState(std::string file_name);
-
     // @brief: sets a custom key to toggle on/off the container, this only works for the main container (window)
     // @params: unsigned int key = toggle key
     void SetKey(unsigned int key);
@@ -77,6 +74,14 @@ namespace FGUI
 
     // @brief: handle input inside the widget
     void Input() override;
+
+    // @brief: save the widget state
+    // @params: nlohmann::json module = json module 
+    void Save(nlohmann::json& module) override;
+
+    // @brief: load the widget state
+    // @params: std::string file = file name/path to load
+    void Load(std::string file) override;
 
   private:
     bool m_bIsOpened;

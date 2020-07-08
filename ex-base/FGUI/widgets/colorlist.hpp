@@ -52,9 +52,6 @@ namespace FGUI
     // @params: std::size_t index = entry index
     FGUI::COLOR GetColor(std::size_t index);
 
-    // @brief: get color info
-    std::vector<FGUI::COLOR_INFO> GetColorInfo();
-
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
 
@@ -63,6 +60,14 @@ namespace FGUI
 
     // @brief: handle input inside the widget
     void Input() override;
+
+    // @brief: save the widget state
+    // @params: nlohmann::json module = json module 
+    void Save(nlohmann::json& module) override;
+
+    // @brief: load the widget state
+    // @params: std::string file = file name/path to load
+    void Load(std::string file) override;
 
   private:
     std::size_t m_uiSelectedEntry;

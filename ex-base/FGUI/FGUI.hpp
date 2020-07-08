@@ -6,6 +6,7 @@
 
 // misc
 #include "misc/aliases.hpp"
+#include "misc/builder.hpp"
 #include "misc/definitions.hpp"
 #include "misc/helpers.hpp"
 

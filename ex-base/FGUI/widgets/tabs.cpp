@@ -78,6 +78,18 @@ namespace FGUI
 
   void CTabs::Input()
   {
+
   }
+
+  void CTabs::Save(nlohmann::json& module)
+  {
+
+  }
+
+  void CTabs::Load(std::string file)
+  {
+
+  }
+
 
 } // namespace FGUI

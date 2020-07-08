@@ -62,4 +62,14 @@ namespace FGUI
     }
   }
 
+  void CButton::Save(nlohmann::json& module)
+  {
+
+  }
+
+  void CButton::Load(std::string file)
+  {
+
+  }
+
 } // namespace FGUI

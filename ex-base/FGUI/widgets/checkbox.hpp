@@ -38,6 +38,14 @@ namespace FGUI
     // @brief: handle input inside the widget
     void Input() override;
 
+    // @brief: save the widget state
+    // @params: nlohmann::json module = json module 
+    void Save(nlohmann::json& module) override;
+
+    // @brief: load the widget state
+    // @params: std::string file = file name/path to load
+    void Load(std::string file) override;
+
   private:
     bool m_bIsChecked;
     std::function<void()> m_fnctCallback;
