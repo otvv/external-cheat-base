@@ -171,7 +171,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FGUI\dependencies\external\tinyxml2.cpp" />
     <ClCompile Include="FGUI\widgets\button.cpp" />
     <ClCompile Include="FGUI\widgets\checkbox.cpp" />
     <ClCompile Include="FGUI\widgets\colorlist.cpp" />
@@ -189,9 +188,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FGUI\dependencies\external\tinyxml2.hpp" />
+    <ClInclude Include="FGUI\dependencies\external\json.hpp" />
     <ClInclude Include="FGUI\FGUI.hpp" />
     <ClInclude Include="FGUI\misc\aliases.hpp" />
+    <ClInclude Include="FGUI\misc\builder.hpp" />
     <ClInclude Include="FGUI\misc\definitions.hpp" />
     <ClInclude Include="FGUI\misc\helpers.hpp" />
     <ClInclude Include="FGUI\widgets\button.hpp" />

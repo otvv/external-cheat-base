@@ -13,6 +13,7 @@
 
 namespace FGUI
 {
+
   void CWidgets::SetPosition(unsigned int x, unsigned int y)
   {
     m_ptPosition.m_iX = x;

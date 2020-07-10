@@ -98,13 +98,10 @@ namespace FGUI
 
   void CLabel::Save(nlohmann::json& module)
   {
-
   }
 
   void CLabel::Load(std::string file)
   {
-
   }
-
 
 } // namespace FGUI

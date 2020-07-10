@@ -8,6 +8,7 @@
 
 namespace FGUI
 {
+
   CMultiBox::CMultiBox()
   {
     m_strTitle = "MultiBox";

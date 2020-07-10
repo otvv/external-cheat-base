@@ -40,7 +40,7 @@ namespace OVERLAY
 
     if (m_hwndTarget == GetForegroundWindow())
     {
-      Container->Render();
+
     }
 
     RENDER::m_pDevice->EndScene();

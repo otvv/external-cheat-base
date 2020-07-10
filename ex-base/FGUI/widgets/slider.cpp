@@ -147,5 +147,4 @@ namespace FGUI
     m_flValue = jsModule[strFormatedWidgetName];
   }
 
-
 } // namespace FGUI

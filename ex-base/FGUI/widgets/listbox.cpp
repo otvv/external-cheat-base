@@ -247,5 +247,4 @@ namespace FGUI
     m_ullSelectedEntry = jsModule[strFormatedWidgetName];
   }
 
-
 } // namespace FGUI

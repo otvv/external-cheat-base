@@ -194,5 +194,4 @@ namespace FGUI
     m_clrDefault.m_ucAlpha = jsModule[strFormatedWidgetName]["alpha"];
   }
 
-
 } // namespace FGUI

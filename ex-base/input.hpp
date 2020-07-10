@@ -10,7 +10,7 @@
 #include "FGUI/misc/definitions.hpp"
 #include "FGUI/misc/aliases.hpp"
 
-namespace INPUT_SYSTEM
+namespace INPUT
 {
   inline std::array<bool, 256> m_prgpCurrentPressedKeys, m_prgpOldPressedKeys;
   inline FGUI::POINT m_ptCursorPosition, m_ptCursorPositionDelta;
@@ -76,13 +76,13 @@ namespace INPUT_SYSTEM
 
   inline void OnEntryPoint()
   {
-    FGUI::INPUT.PullInput = INPUT_SYSTEM::PullInput;
-    FGUI::INPUT.GetKeyState = INPUT_SYSTEM::GetKeyState;
-    FGUI::INPUT.GetKeyRelease = INPUT_SYSTEM::GetKeyRelease;
-    FGUI::INPUT.GetKeyPress = INPUT_SYSTEM::GetKeyPress;
-    FGUI::INPUT.GetCursorPos = INPUT_SYSTEM::GetCursorPos;
-    FGUI::INPUT.GetCursorPosDelta = INPUT_SYSTEM::GetCursorPosDelta;
-    FGUI::INPUT.GetCursorWheelDelta = INPUT_SYSTEM::GetCursorWheelDelta;
-    FGUI::INPUT.IsCursorInArea = INPUT_SYSTEM::IsCursorInArea;
+    FGUI::INPUT.PullInput = INPUT::PullInput;
+    FGUI::INPUT.GetKeyState = INPUT::GetKeyState;
+    FGUI::INPUT.GetKeyRelease = INPUT::GetKeyRelease;
+    FGUI::INPUT.GetKeyPress = INPUT::GetKeyPress;
+    FGUI::INPUT.GetCursorPos = INPUT::GetCursorPos;
+    FGUI::INPUT.GetCursorPosDelta = INPUT::GetCursorPosDelta;
+    FGUI::INPUT.GetCursorWheelDelta = INPUT::GetCursorWheelDelta;
+    FGUI::INPUT.IsCursorInArea = INPUT::IsCursorInArea;
   }
 }

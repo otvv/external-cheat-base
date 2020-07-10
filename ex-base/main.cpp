@@ -13,7 +13,7 @@
 int main(HINSTANCE _instance)
 {
   // initialize input system
-  INPUT_SYSTEM::OnEntryPoint();
+  INPUT::OnEntryPoint();
 
   // initialize render manager
   RENDER::OnEntryPoint();

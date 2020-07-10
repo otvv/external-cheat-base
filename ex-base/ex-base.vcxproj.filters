@@ -34,9 +34,6 @@
     <ClCompile Include="FGUI\widgets\widgets.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="FGUI\dependencies\external\tinyxml2.cpp">
-      <Filter>ex-client\FGUI\dependencies\external</Filter>
-    </ClCompile>
     <ClCompile Include="FGUI\widgets\colorpicker.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
@@ -108,9 +105,6 @@
     <ClInclude Include="helpers.hpp">
       <Filter>ex-client\utilities</Filter>
     </ClInclude>
-    <ClInclude Include="FGUI\dependencies\external\tinyxml2.hpp">
-      <Filter>ex-client\FGUI\dependencies\external</Filter>
-    </ClInclude>
     <ClInclude Include="FGUI\widgets\colorpicker.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
@@ -130,6 +124,12 @@
       <Filter>ex-client\FGUI\misc</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\misc\helpers.hpp">
+      <Filter>ex-client\FGUI\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\dependencies\external\json.hpp">
+      <Filter>ex-client\FGUI\dependencies\external</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\misc\builder.hpp">
       <Filter>ex-client\FGUI\misc</Filter>
     </ClInclude>
   </ItemGroup>
