@@ -52,6 +52,13 @@ namespace FGUI
     // @params: std::size_t index = entry index
     FGUI::COLOR GetColor(std::size_t index);
 
+    // @brief: set the pixelation of the color pallet
+    // @params: unsigned int pixelation = pixelation amount
+    void SetPixelation(unsigned int pixelation);
+
+    // @brief: returns the current pixelation of the color pallet
+    unsigned int GetPixelation();
+
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
 
@@ -62,16 +69,20 @@ namespace FGUI
     void Input() override;
 
     // @brief: save the widget state
-    // @params: nlohmann::json module = json module 
+    // @params: nlohmann::json module = json module
     void Save(nlohmann::json& module) override;
 
     // @brief: load the widget state
-    // @params: std::string file = file name/path to load
-    void Load(std::string file) override;
+    // @params: nlohmann::json module = json module
+    void Load(nlohmann::json& module) override;
+
+    // @brief: handle widget tooltips
+    void Tooltip() override;
 
   private:
     std::size_t m_uiSelectedEntry;
     int m_iEntrySpacing;
+    unsigned int m_uiPixelation;
     bool m_bIsDraggingThumb;
     int m_iScrollThumbPosition;
     FGUI::PRECISION m_prRelativePos;

@@ -16,6 +16,8 @@ namespace FGUI
     m_prRelativePos = { 5.f, 5.f };
     m_clrDefault = { 1, 1, 1 };
     m_anyFont = 0;
+    m_uiPixelation = 2;
+    m_strTooltip = "";
     m_nType = static_cast<int>(WIDGET_TYPE::COLORPICKER);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::FOCUSABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -28,6 +30,16 @@ namespace FGUI
   FGUI::COLOR CColorPicker::GetColor()
   {
     return m_clrDefault;
+  }
+
+  void CColorPicker::SetPixelation(unsigned int pixelation)
+  {
+    m_uiPixelation = pixelation;
+  }
+
+  unsigned int CColorPicker::GetPixelation()
+  {
+    return m_uiPixelation;
   }
 
   void CColorPicker::Geometry()
@@ -45,31 +57,29 @@ namespace FGUI
 
       FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + 25), GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-      static constexpr int iPixelation = 2; // TODO: make a function for this
-
       // color picker body
       FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom, { 100, 100, 100 });
       FGUI::RENDER.Outline(arColorPickerRegion.m_iLeft - 1, arColorPickerRegion.m_iTop - 1, (arColorPickerRegion.m_iRight + 3), (arColorPickerRegion.m_iBottom + 3), { 220, 220, 220 });
       FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, (arColorPickerRegion.m_iRight + 40), arColorPickerRegion.m_iBottom, { 245, 245, 245 });
 
-      for (std::size_t i = 0; i < arColorPickerRegion.m_iBottom; i += iPixelation)
+      for (std::size_t i = 0; i < static_cast<unsigned int>(arColorPickerRegion.m_iBottom); i += GetPixelation())
       {
         // color hue
         FGUI::COLOR clrHue = FGUI::COLOR::HSBToRGB((i / 150.f), 1.f, 1.f);
 
-        FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, (arColorPickerRegion.m_iTop + i), 10, iPixelation, clrHue);
+        FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, (arColorPickerRegion.m_iTop + i), 10, GetPixelation(), clrHue);
 
         // color alpha
         FGUI::COLOR clrAlpha = FGUI::COLOR(m_clrDefault.m_ucRed, m_clrDefault.m_ucGreen, m_clrDefault.m_ucBlue, i / static_cast<float>(arColorPickerRegion.m_iBottom) * 255);
 
-        FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30, (arColorPickerRegion.m_iTop + i), 10, iPixelation, clrAlpha);
+        FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30, (arColorPickerRegion.m_iTop + i), 10, GetPixelation(), clrAlpha);
 
-        for (std::size_t j = 0; j < arColorPickerRegion.m_iRight; j += iPixelation)
+        for (std::size_t j = 0; j < static_cast<unsigned int>(arColorPickerRegion.m_iRight); j += GetPixelation())
         {
           // color hsb
           FGUI::COLOR clrHSB = FGUI::COLOR::HSBToRGB(FGUI::COLOR::GetHue(m_clrDefault), j / static_cast<float>(arColorPickerRegion.m_iRight), i / static_cast<float>(arColorPickerRegion.m_iBottom), m_clrDefault.m_ucAlpha);
 
-          FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + j), (arColorPickerRegion.m_iTop + i), iPixelation, iPixelation, clrHSB);
+          FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + j), (arColorPickerRegion.m_iTop + i), GetPixelation(), GetPixelation(), clrHSB);
         }
       }
 
@@ -113,13 +123,13 @@ namespace FGUI
 
       FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
-      if (FGUI::INPUT.GetKeyPress(MOUSE_1))
+      if (FGUI::INPUT.IsKeyPressed(MOUSE_1))
       {
         bColorHSBSelected = FGUI::INPUT.IsCursorInArea(arColorHSBRegion);
         bColorHueSelected = FGUI::INPUT.IsCursorInArea(arColorHueRegion);
         bColorAlphaSelected = FGUI::INPUT.IsCursorInArea(arColorAlphaRegion);
       }
-      else if (FGUI::INPUT.GetKeyRelease(MOUSE_1))
+      else if (FGUI::INPUT.IsKeyReleased(MOUSE_1))
       {
         bColorHSBSelected = false;
         bColorHueSelected = false;
@@ -170,28 +180,32 @@ namespace FGUI
     module[strFormatedWidgetName]["alpha"] = m_clrDefault.m_ucAlpha;
   }
 
-  void CColorPicker::Load(std::string file)
+  void CColorPicker::Load(nlohmann::json& module)
   {
-    nlohmann::json jsModule;
-
-    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
-
-    if (ifsFileToLoad.fail())
-    {
-      return; // TODO: handle this properly
-    }
-
-    jsModule = nlohmann::json::parse(ifsFileToLoad);
-
     // remove spaces from widget name
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget color to the one stored on file
-    m_clrDefault.m_ucRed = jsModule[strFormatedWidgetName]["red"];
-    m_clrDefault.m_ucGreen = jsModule[strFormatedWidgetName]["green"];
-    m_clrDefault.m_ucBlue = jsModule[strFormatedWidgetName]["blue"];
-    m_clrDefault.m_ucAlpha = jsModule[strFormatedWidgetName]["alpha"];
+    m_clrDefault.m_ucRed = module[strFormatedWidgetName]["red"];
+    m_clrDefault.m_ucGreen = module[strFormatedWidgetName]["green"];
+    m_clrDefault.m_ucBlue = module[strFormatedWidgetName]["blue"];
+    m_clrDefault.m_ucAlpha = module[strFormatedWidgetName]["alpha"];
+  }
+
+  void CColorPicker::Tooltip()
+  {
+    if (m_strTooltip.length() > 1 && !m_bIsOpened)
+    {
+      FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+
+      FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+
+      FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
+      FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
+      FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
+        arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
+    }
   }
 
 } // namespace FGUI

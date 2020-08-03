@@ -53,6 +53,13 @@ namespace FGUI
     // @brief: get the widget's default title
     std::string GetTitle();
 
+    // @brief: adds a new tooltip to the widget
+    // @params: std::string tooltio = widget brief description
+    void SetTooltip(std::string tooltip);
+
+    // @brief: get the widget's current tooltip
+    std::string GetTooltip();
+
     // @brief: set the widget flags
     // @params: int flags = widget default/custom flag
     void SetFlags(int flags);
@@ -66,18 +73,18 @@ namespace FGUI
 
     // @brief: set the widget that will behave like a medium (controller) for the parent widget
     // @params: std::shared_ptr<FGUI::CWidgets> medium = controller (element that will control the other)
-    // unsigned int page = widget page
-    void SetMedium(std::shared_ptr<FGUI::CWidgets> medium, unsigned int page);
+    // int page = widget page
+    void SetMedium(std::shared_ptr<FGUI::CWidgets> medium, int page);
 
     // @brief: return an instance of the current medium (controller widget)
     std::shared_ptr<FGUI::CWidgets> GetMedium();
 
     // @brief: set current widget page
-    // @params: unsigned int page = widget page
-    void SetPage(unsigned int page);
+    // @params: int page = widget page
+    void SetPage(int page);
 
     // @brief: get current widget page
-    unsigned int GetPage();
+    int GetPage();
 
     // @brief: return the widget type (family)
     int GetType();
@@ -104,7 +111,6 @@ namespace FGUI
     std::shared_ptr<FGUI::CWidgets> GetParentWidget();
 
   protected:
-
     // @brief: populate widget geometry (draw widget)
     virtual void Geometry() = 0;
 
@@ -115,18 +121,22 @@ namespace FGUI
     virtual void Input() = 0;
 
     // @brief: save the widget state
-    // @params: nlohmann::json module = json module 
+    // @params: nlohmann::json module = json module
     virtual void Save(nlohmann::json& module) = 0;
 
     // @brief: load the widget state
-    // @params: std::string file = file name/path to load
-    virtual void Load(std::string file) = 0;
+    // @params: nlohmann::json module = json module
+    virtual void Load(nlohmann::json& module) = 0;
+
+    // @brief: handle widget tooltips
+    virtual void Tooltip() = 0;
 
     int m_nFlags;
     int m_nType;
-    unsigned int m_uiPage;
+    int m_iPage;
     std::shared_ptr<FGUI::CWidgets> m_pParentWidget;
     std::shared_ptr<FGUI::CWidgets> m_pMediumWidget;
+    std::string m_strTooltip;
     std::string m_strTitle;
     FGUI::FONT m_anyFont;
     FGUI::DIMENSION m_dmSize;

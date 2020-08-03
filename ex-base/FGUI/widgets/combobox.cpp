@@ -19,6 +19,7 @@ namespace FGUI
     m_prgpEntries = {};
     m_fnctCallback = nullptr;
     m_bIsOpened = false;
+    m_strTooltip = "";
     m_nType = static_cast<int>(WIDGET_TYPE::COMBOBOX);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::FOCUSABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -85,6 +86,9 @@ namespace FGUI
     // combobox label
     FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
 
+    // clip widget area
+    FGUI::RENDER.LimitArea({ arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, m_dmSize.m_iHeight });
+
     // draw current selected entry
     FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_prgpEntries.first[m_ullSelectedEntry]);
 
@@ -117,22 +121,16 @@ namespace FGUI
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - 10) - 7, arWidgetRegion.m_iTop + ((arWidgetRegion.m_iBottom / 2) - 3) + 2, 6, 1, { 20, 20, 20 });
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - 10) - 6, arWidgetRegion.m_iTop + ((arWidgetRegion.m_iBottom / 2) - 3) + 3, 4, 1, { 20, 20, 20 });
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - 10) - 5, arWidgetRegion.m_iTop + ((arWidgetRegion.m_iBottom / 2) - 3) + 4, 2, 1, { 20, 20, 20 });
+
+    FGUI::RENDER.ResetLimit();
   }
 
   void CComboBox::Update()
   {
     if (m_bIsOpened)
     {
-      FGUI::AREA arOpenedWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
-
       // keep widget focused
       std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
-
-      // close dropdown list if the user clicks on something else
-      if (!FGUI::INPUT.IsCursorInArea(arOpenedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1))
-      {
-        m_bIsOpened = false;
-      }
 
       m_dmSize.m_iHeight = m_iEntrySpacing + (m_prgpEntries.first.size() * m_iEntrySpacing) + 2;
     }
@@ -173,7 +171,7 @@ namespace FGUI
                 // call function
                 m_fnctCallback();
               }
-               
+
               // close dropdown list after selecting something
               m_bIsOpened = false;
             }
@@ -192,25 +190,29 @@ namespace FGUI
     module[strFormatedWidgetName] = m_ullSelectedEntry;
   }
 
-  void CComboBox::Load(std::string file)
+  void CComboBox::Load(nlohmann::json& module)
   {
-    nlohmann::json jsModule;
-
-    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
-
-    if (ifsFileToLoad.fail())
-    {
-      return; // TODO: handle this properly
-    }
-
-    jsModule = nlohmann::json::parse(ifsFileToLoad);
-
     // remove spaces from widget name
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget selected entry to the one stored on file
-    m_ullSelectedEntry = jsModule[strFormatedWidgetName];
+    m_ullSelectedEntry = module[strFormatedWidgetName];
+  }
+
+  void CComboBox::Tooltip()
+  {
+    if (m_strTooltip.length() > 1 && !m_bIsOpened)
+    {
+      FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+
+      FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+
+      FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
+      FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
+      FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
+        arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
+    }
   }
 
 } // namespace FGUI

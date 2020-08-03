@@ -18,6 +18,7 @@ namespace FGUI
     m_bIsDragging = false;
     m_rngBoundaries = { 0.f, 0.f };
     m_anyFont = 0;
+    m_strTooltip = "";
     m_nType = static_cast<int>(WIDGET_TYPE::SLIDER);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -73,7 +74,7 @@ namespace FGUI
     // if the user is dragging the slider
     if (m_bIsDragging)
     {
-      if (FGUI::INPUT.GetKeyState(MOUSE_1))
+      if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
       {
         float flXPosDelta = 0.f;
         float flRatio = 0.f;
@@ -126,25 +127,29 @@ namespace FGUI
     module[strFormatedWidgetName] = m_flValue;
   }
 
-  void CSlider::Load(std::string file)
+  void CSlider::Load(nlohmann::json& module)
   {
-    nlohmann::json jsModule;
-
-    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
-
-    if (ifsFileToLoad.fail())
-    {
-      return; // TODO: handle this properly
-    }
-
-    jsModule = nlohmann::json::parse(ifsFileToLoad);
-
     // remove spaces from widget name
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget value to the one stored on file
-    m_flValue = jsModule[strFormatedWidgetName];
+    m_flValue = module[strFormatedWidgetName];
+  }
+
+  void CSlider::Tooltip()
+  {
+    if (m_strTooltip.length() > 1 && !m_bIsDragging)
+    {
+      FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+
+      FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+
+      FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
+      FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
+      FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
+        arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
+    }
   }
 
 } // namespace FGUI

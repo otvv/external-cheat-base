@@ -13,6 +13,10 @@
 
 namespace FGUI
 {
+  using TAB_STYLE = enum struct ESTabLayout_t : int {
+    HORIZONTAL = 0,
+    VERTICAL = 1
+  };
 
   class CTabs : public FGUI::CWidgets
   {
@@ -20,7 +24,7 @@ namespace FGUI
     CTabs();
 
     // @brief: adds a new tab to the tab container
-    // @params: std::string title = tab title  
+    // @params: std::string title = tab title
     void AddTab(std::string title);
 
     // @brief: sets a selected tab
@@ -29,6 +33,13 @@ namespace FGUI
 
     // @brief: returns the current selected tab
     std::size_t GetIndex();
+
+    // @brief: set the tab style (HORIZONTAL = it will draw the tab panel horizontaly; VERTICAL = it will draw the tab panel verticaly)
+    // @params: FGUI::TAB_STYLE style = tab panel style (layout)
+    void SetStyle(FGUI::TAB_STYLE style);
+
+    // @brief: returns the current style of the tab panel
+    int GetStyle();
 
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
@@ -40,17 +51,21 @@ namespace FGUI
     void Input() override;
 
     // @brief: save the widget state
-    // @params: nlohmann::json module = json module 
+    // @params: nlohmann::json module = json module
     void Save(nlohmann::json& module) override;
 
     // @brief: load the widget state
-    // @params: std::string file = file name/path to load
-    void Load(std::string file) override;
+    // @params: nlohmann::json module = json module
+    void Load(nlohmann::json& module) override;
+
+    // @brief: handle widget tooltips
+    void Tooltip() override;
 
   private:
     int m_iEntrySpacing;
     std::size_t m_ullSelectedEntry;
     std::vector<std::string> m_prgpTabs;
+    int m_nStyle;
   };
 
 } // namespace FGUI

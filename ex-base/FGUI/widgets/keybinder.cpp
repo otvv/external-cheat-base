@@ -16,6 +16,7 @@ namespace FGUI
     m_uiKey = 0;
     m_strStatus = "None";
     m_bIsGettingKey = false;
+    m_strTooltip = "";
     m_nType = static_cast<int>(WIDGET_TYPE::KEYBINDER);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -62,7 +63,7 @@ namespace FGUI
       for (std::size_t key = 0; key < 256; key++)
       {
         // if the user has pressed a valid key
-        if (FGUI::INPUT.GetKeyPress(key))
+        if (FGUI::INPUT.IsKeyPressed(key))
         {
           // if the user press ESCAPE
           if (key == KEY_ESCAPE)
@@ -78,12 +79,33 @@ namespace FGUI
           }
           else // iterate the rest of the keys
           {
-            // set key 
+            // set key
             m_uiKey = key;
 
             // change status to currently pressed key
-            // m_strStatus = m_kcCodes.m_strInputSystem[key].data(); // TODO: make a function to let users select which type of "input system" they want
-            m_strStatus = m_kcCodes.m_strVirtualKeyCodes[key].data();
+            switch (FGUI::INPUT.GetInputType())
+            {
+              case static_cast<int>(INPUT_TYPE::WIN_32) :
+              {
+                m_strStatus = m_kcCodes.m_strVirtualKeyCodes[key].data();
+                break;
+              }
+              case static_cast<int>(INPUT_TYPE::INPUT_SYSTEM) :
+              {
+                m_strStatus = m_kcCodes.m_strInputSystem[key].data();
+                break;
+              }
+              case static_cast<int>(INPUT_TYPE::CUSTOM) :
+              {
+                m_strStatus = "NOT IMPLEMENTED";
+                break;
+              }
+              default:
+              {
+                throw std::exception("make sure to set an input type. Take a look at the wiki for more info.");
+                break;
+              }
+            }
 
             // block keybinder from receiving input
             m_bIsGettingKey = false;
@@ -112,25 +134,29 @@ namespace FGUI
     module[strFormatedWidgetName] = m_uiKey;
   }
 
-  void CKeyBinder::Load(std::string file)
+  void CKeyBinder::Load(nlohmann::json& module)
   {
-    nlohmann::json jsModule;
-
-    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
-
-    if (ifsFileToLoad.fail())
-    {
-      return; // TODO: handle this properly
-    }
-
-    jsModule = nlohmann::json::parse(ifsFileToLoad);
-
     // remove spaces from widget name
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget default key to the one stored on file
-    m_uiKey = jsModule[strFormatedWidgetName];
+    m_uiKey = module[strFormatedWidgetName];
+  }
+
+  void CKeyBinder::Tooltip()
+  {
+    if (m_strTooltip.length() > 1 && !m_bIsGettingKey)
+    {
+      FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+
+      FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+
+      FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
+      FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
+      FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
+        arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
+    }
   }
 
 } // namespace FGUI

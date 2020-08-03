@@ -9,8 +9,6 @@
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT _driver_object, PUNICODE_STRING _registry_path)
 {
-	UNREFERENCED_PARAMETER(_registry_path);
-
 	printf("[external driver] - loading driver..");
 
 	// function that will unload the driver
@@ -21,8 +19,6 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT _driver_object, PUNICODE_STRING _registry_pa
 
 NTSTATUS DriverExit(PDRIVER_OBJECT _driver_object)
 {
-	UNREFERENCED_PARAMETER(_driver_object);
-
 	printf("[external driver] - unloading driver..");
 
 	return STATUS_SUCCESS;

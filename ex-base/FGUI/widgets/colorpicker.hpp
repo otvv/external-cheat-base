@@ -15,12 +15,19 @@ namespace FGUI
   public:
     CColorPicker();
 
-    // @brief: sets the default color 
+    // @brief: sets the default color
     // @args: FGUI::COLOR color = default color
     void SetColor(FGUI::COLOR color);
 
     // @brief: returns the current color
     FGUI::COLOR GetColor();
+
+    // @brief: set the pixelation of the color picker
+    // @params: unsigned int pixelation = pixelation amount
+    void SetPixelation(unsigned int pixelation);
+
+    // @brief: returns the current pixelation of the color picker
+    unsigned int GetPixelation();
 
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
@@ -32,15 +39,19 @@ namespace FGUI
     void Input() override;
 
     // @brief: save the widget state
-    // @params: nlohmann::json module = json module 
+    // @params: nlohmann::json module = json module
     void Save(nlohmann::json& module) override;
 
     // @brief: load the widget state
-    // @params: std::string file = file name/path to load
-    void Load(std::string file) override;
+    // @params: nlohmann::json module = json module
+    void Load(nlohmann::json& module) override;
+
+    // @brief: handle widget tooltips
+    void Tooltip() override;
 
   private:
     FGUI::COLOR m_clrDefault;
+    unsigned int m_uiPixelation;
     bool m_bIsOpened;
     FGUI::PRECISION m_prRelativePos;
   };

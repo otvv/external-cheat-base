@@ -176,7 +176,7 @@ namespace FGUI
                                                     "MOUSE1", "MOUSE2", "MOUSE3", "MOUSE4", "MOUSE5", "", "" };
 
     // Windows Virtual Key Codes (VK)
-    const std::string_view m_strVirtualKeyCodes[222] = { "MOUSE1", "MOUSE2", "", "MOUSE3", "MOUSE4", "MOUSE5", "",
+    const std::string_view m_strVirtualKeyCodes[223] = { "INVALID", "MOUSE1", "MOUSE2", "", "MOUSE3", "MOUSE4", "MOUSE5", "",
                                                         "BACKSPACE", "TAB", "", "", "", "ENTER", "", "", "SHIFT", "CONTROL", "ALT",
                                                         "PAUSE", "CAPSLOCK", "", "", "", "", "", "", "ESC", "", "", "", "",
                                                         "SPACE", "PAGE UP", "PAGE DOWN", "END", "HOME", "LEFT", "UP", "RIGHT",
@@ -206,7 +206,7 @@ namespace FGUI
                                                     "", "", "", "", "", "", "",
                                                     "", "", "/", "*", "-", "+", "", ",", "[",
                                                     "]", "Ç", "'", "´", ",", ".", "/", "\\", "-", "=",
-                                                    "", " ", "", "", "", "", "",
+                                                    "", "", "", "", "", "", "",
                                                     "", "", "", "", "", "", "",
                                                     "", "", "", "", "", "",
                                                     "", "", "", "", "", "", "",
@@ -215,14 +215,14 @@ namespace FGUI
                                                     "", "", "", "", "", "", "" };
 
     // Windows Virtual Key Codes (VK)
-    const std::string_view m_strVirtualKeyCodes[222] = { "", "", "", "", "", "", "",
+    const std::string_view m_strVirtualKeyCodes[223] = { "INVALID", "", "", "", "", "", "", "",
                                                         "", "", "", "", "", "", "", "", "", "", "",
                                                         "", "", "", "", "", "", "", "", "", "", "", "", "",
-                                                        " ", "", "", "", "", "", "", "",
+                                                        "", "", "", "", "", "", "", "",
                                                         "", "", "", "", "", "", "", "", "0", "1", "2", "3",
-                                                        "4", "5", "6", "7", "8", "9", "", "", "", "", "", "", "", "A",
+                                                        "4", "5", "6", "7", "8", "9", "", "", "", "", "", "", "", "a",
                                                         "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
-                                                        "q", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "",
+                                                        "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "",
                                                         "", "", "", "", "0", "1", "2", "3", "4", "5",
                                                         "6", "7", "8", "9", "*", "+", "_", "-", ".", "/", "",
                                                         "", "", "", "", "", "", "", "", "", "", "",

@@ -8,7 +8,6 @@
 #include <windows.h>
 #include <thread>
 #include <dwmapi.h>
-#include <fstream>
 
 #include "menu.hpp"
 #include "input.hpp"
@@ -35,11 +34,14 @@ namespace OVERLAY
     RENDER::m_pDevice->Clear(0, 0, D3DCLEAR_TARGET, 0, 1.0f, 0);
     RENDER::m_pDevice->BeginScene();
 
-    // update device state
-    RENDER::UpdateDeviceState();
+    // update device states
+    RENDER::RunDeviceStates();
 
     if (m_hwndTarget == GetForegroundWindow())
     {
+    
+    // menu 
+    WIDGETS::Container->Render();
 
     }
 
@@ -56,9 +58,6 @@ namespace OVERLAY
       break;
     case WM_CREATE:
       DwmExtendFrameIntoClientArea(m_hwndOverlay, reinterpret_cast<MARGINS*>(&m_arOverlayRegion));
-      break;
-    case WM_MOUSEWHEEL:
-      INPUT_SYSTEM::m_iCursorWheelDelta = -GET_WHEEL_DELTA_WPARAM(_wparam);
       break;
     case WM_DESTROY:
       PostQuitMessage(1);

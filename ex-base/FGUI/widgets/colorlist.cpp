@@ -29,13 +29,16 @@ namespace FGUI
     // setup widgets
     m_pPlusButton->SetTitle("+");
     m_pPlusButton->SetSize(16, 16);
+    m_pPlusButton->SetTooltip("Add a new color into the sequence.");
     m_pPlusButton->SetFont("Tahoma", 13, 0x0, false);
 
     m_pMinusButton->SetTitle("-");
     m_pMinusButton->SetSize(16, 16);
+    m_pMinusButton->SetTooltip("Remove a color from the sequence.");
     m_pMinusButton->SetFont("Tahoma", 13, 0x0, false);
 
     m_pGradientCheckBox->SetTitle("Gradient");
+    m_pGradientCheckBox->SetTooltip("Enables color interpolation (gradient).");
     m_pGradientCheckBox->SetFont("Tahoma", 13, 0x0, false);
     m_pGradientCheckBox->SetState(gradient);
 
@@ -43,6 +46,7 @@ namespace FGUI
     m_pAlphaSlider->SetValue((m_clrFirst.m_ucAlpha / 2.55f));
     m_pAlphaSlider->SetRange(0.f, (255 / 2.55f));
     m_pAlphaSlider->SetSize(150, 2);
+    m_pAlphaSlider->SetTooltip("Color alpha (transparency).");
     m_pAlphaSlider->SetFont("Tahoma", 13, 0x0, false);
     m_pAlphaSlider->SetPrefix("%");
   }
@@ -53,9 +57,11 @@ namespace FGUI
     m_iEntrySpacing = 20;
     m_prRelativePos = { 5.f, 5.f };
     m_iScrollThumbPosition = 0;
-    m_uiSelectedEntry = false;
+    m_uiSelectedEntry = 0;
+    m_uiPixelation = 2;
     m_bIsDraggingThumb = false;
     m_anyFont = 0;
+    m_strTooltip = "";
     m_nType = static_cast<int>(WIDGET_TYPE::COLORLIST);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -83,7 +89,7 @@ namespace FGUI
       {
         static float flSecondTimeFraction = 0.f;
 
-        // ghetto way to return back to the first color
+        // return back to the first color
         flSecondTimeFraction = std::fminf(flSecondTimeFraction + 0.0005f, 1.f);
 
         if (flSecondTimeFraction >= 1.f)
@@ -99,6 +105,16 @@ namespace FGUI
     }
 
     return m_prgpColorInfo[index].m_clrFirst;
+  }
+
+  void CColorList::SetPixelation(unsigned int pixelation)
+  {
+    m_uiPixelation = pixelation;
+  }
+
+  unsigned int CColorList::GetPixelation()
+  {
+    return m_uiPixelation;
   }
 
   void CColorList::Geometry()
@@ -161,24 +177,22 @@ namespace FGUI
 
     FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + (m_dmSize.m_iWidth - iColorPickerGap) + 10), (GetAbsolutePosition().m_iY + 20), dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-    static constexpr int iPixelation = 2; // TODO: make a function for this
-
     // color picker body
     FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom, { 100, 100, 100 });
 
-    for (std::size_t i = 0; i < arColorPickerRegion.m_iBottom; i += iPixelation)
+    for (std::size_t i = 0; i < static_cast<unsigned int>(arColorPickerRegion.m_iBottom); i += GetPixelation())
     {
       // color hue
       FGUI::COLOR clrHue = FGUI::COLOR::HSBToRGB((i / 150.f), 1.f, 1.f);
 
-      FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, (arColorPickerRegion.m_iTop + i), 15, iPixelation, clrHue);
+      FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, (arColorPickerRegion.m_iTop + i), 15, GetPixelation(), clrHue);
 
-      for (std::size_t j = 0; j < arColorPickerRegion.m_iRight; j += iPixelation)
+      for (std::size_t j = 0; j < static_cast<unsigned int>(arColorPickerRegion.m_iRight); j += GetPixelation())
       {
         // color hsb
         FGUI::COLOR clrHSB = FGUI::COLOR::HSBToRGB(FGUI::COLOR::GetHue(m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst), j / static_cast<float>(arColorPickerRegion.m_iRight), i / static_cast<float>(arColorPickerRegion.m_iBottom), m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst.m_ucAlpha);
 
-        FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + j), (arColorPickerRegion.m_iTop + i), iPixelation, iPixelation, clrHSB);
+        FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + j), (arColorPickerRegion.m_iTop + i), GetPixelation(), GetPixelation(), clrHSB);
       }
     }
 
@@ -274,7 +288,7 @@ namespace FGUI
 
       FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
-      if (FGUI::INPUT.GetKeyState(MOUSE_1))
+      if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
       {
         // move thumb vertically
         ptCursorPos.m_iY -= (GetAbsolutePosition().m_iY + 20);
@@ -295,7 +309,7 @@ namespace FGUI
         float flNewYRatio = static_cast<float>(ptCursorPos.m_iY) / static_cast<float>(m_dmSize.m_iHeight - 20);
         m_iScrollThumbPosition = (flNewYRatio * m_prgpColorInfo.size());
 
-        // clamp position (don't let the user drag the scrollthumb if it reaches the "start" of the scrollbar area)
+        // clamp position (don't let the user drag the scroll thumb if it reaches the "start" of the scrollbar area)
         if (m_iScrollThumbPosition <= 0)
         {
           m_iScrollThumbPosition = 0;
@@ -330,12 +344,12 @@ namespace FGUI
 
       FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
-      if (FGUI::INPUT.GetKeyPress(MOUSE_1))
+      if (FGUI::INPUT.IsKeyPressed(MOUSE_1))
       {
         bColorHSBSelected = FGUI::INPUT.IsCursorInArea(arColorHSBRegion);
         bColorHueSelected = FGUI::INPUT.IsCursorInArea(arColorHueRegion);
       }
-      else if (FGUI::INPUT.GetKeyRelease(MOUSE_1))
+      else if (FGUI::INPUT.IsKeyReleased(MOUSE_1))
       {
         bColorHSBSelected = false;
         bColorHueSelected = false;
@@ -345,8 +359,7 @@ namespace FGUI
       {
         m_prRelativePos = { ptCursorPos.m_iX - static_cast<float>(arColorHSBRegion.m_iLeft), ptCursorPos.m_iY - static_cast<float>(arColorHSBRegion.m_iTop) };
 
-        m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst = FGUI::COLOR::HSBToRGB(FGUI::COLOR::GetHue(m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst), (m_prRelativePos.m_flX /
-          arColorPickerRegion.m_iRight), (m_prRelativePos.m_flY / arColorPickerRegion.m_iBottom), m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst.m_ucAlpha);
+        m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst = FGUI::COLOR::HSBToRGB(FGUI::COLOR::GetHue(m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst), (m_prRelativePos.m_flX / arColorPickerRegion.m_iRight), (m_prRelativePos.m_flY / arColorPickerRegion.m_iBottom), m_prgpColorInfo[m_uiSelectedEntry].m_clrFirst.m_ucAlpha);
       }
       else if (bColorHueSelected)
       {
@@ -394,7 +407,7 @@ namespace FGUI
       {
         if (m_prgpColorInfo[m_uiSelectedEntry].m_bIsSecondColorAdded)
         {
-          // remeve color from sequence
+          // remove color from the sequence
           m_prgpColorInfo[m_uiSelectedEntry].m_bIsSecondColorAdded = false;
 
           // set gradient checkbox state
@@ -443,19 +456,8 @@ namespace FGUI
     }
   }
 
-  void CColorList::Load(std::string file)
+  void CColorList::Load(nlohmann::json& module)
   {
-    nlohmann::json jsModule;
-
-    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
-
-    if (ifsFileToLoad.fail())
-    {
-      return; // TODO: handle this properly
-    }
-
-    jsModule = nlohmann::json::parse(ifsFileToLoad);
-
     // remove spaces from widget name
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
@@ -466,11 +468,15 @@ namespace FGUI
       std::string strFormatedColorIdentificator = m_prgpColorInfo[i].m_strIdentificator;
       std::replace(strFormatedColorIdentificator.begin(), strFormatedColorIdentificator.end(), ' ', '_');
 
-      m_prgpColorInfo[i].m_clrFirst.m_ucRed = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["red"];
-      m_prgpColorInfo[i].m_clrFirst.m_ucGreen = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["green"];
-      m_prgpColorInfo[i].m_clrFirst.m_ucBlue = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["blue"];
-      m_prgpColorInfo[i].m_clrFirst.m_ucAlpha = jsModule[strFormatedWidgetName][strFormatedColorIdentificator]["alpha"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucRed = module[strFormatedWidgetName][strFormatedColorIdentificator]["red"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucGreen = module[strFormatedWidgetName][strFormatedColorIdentificator]["green"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucBlue = module[strFormatedWidgetName][strFormatedColorIdentificator]["blue"];
+      m_prgpColorInfo[i].m_clrFirst.m_ucAlpha = module[strFormatedWidgetName][strFormatedColorIdentificator]["alpha"];
     }
+  }
+
+  void CColorList::Tooltip()
+  {
   }
 
 } // namespace FGUI

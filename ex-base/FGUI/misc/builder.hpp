@@ -31,9 +31,8 @@ namespace FGUI
   class CBuilder
   {
   public:
-
     // @brief: add a new widget to the queue (to be spawned by the builder pattern)
-    // @params: std::shared_ptr<FGUI::Cwidgets> widget = widget that will be spawned
+    // @params: std::shared_ptr<FGUI::CWidgets> widget = widget that will be spawned
     // @note: NEEDS TO BE INITIALIZED FIRST!
     CBuilder& Widget(std::shared_ptr<FGUI::CWidgets> widget)
     {
@@ -57,15 +56,23 @@ namespace FGUI
     {
       m_pTemporaryWidget->SetPosition(x, y);
 
-      return*this;
+      return *this;
     };
+
+    // @brief: sets the current widget tooltip
+    // @params: std::string tooltip = widget custom tooltip
+    CBuilder& Tooltip(std::string tooltip)
+    {
+      m_pTemporaryWidget->SetTooltip(tooltip);
+
+      return *this;
+    }
 
     // @brief: set widget default size
     // @params: unsigned int width = widget width, unsigned int height = widget height
     CBuilder& Size(unsigned int width, unsigned int height)
     {
       m_pTemporaryWidget->SetSize(width, height);
-
 
       return *this;
     };
@@ -84,7 +91,6 @@ namespace FGUI
     CBuilder& Font(FGUI::WIDGET_FONT font)
     {
       m_pTemporaryWidget->SetFont(font);
-
 
       return *this;
     };
@@ -129,11 +135,11 @@ namespace FGUI
         std::reinterpret_pointer_cast<FGUI::CColorList>(m_pTemporaryWidget)->AddColor(identifier, color, gradient);
       }
 
-      return*this;
+      return *this;
     };
 
     // @brief: add a new color to the colorlist
-    // @params: std::string identifier = color name, std::uint8_t red = red color (0 - 255), std::uint8_t green = green color (0 - 255), 
+    // @params: std::string identifier = color name, std::uint8_t red = red color (0 - 255), std::uint8_t green = green color (0 - 255),
     // std::uint8_t blue = blue color (0 - 255), std::uint8_t alpha = color alpha (0 - 255), bool gradient = gradient status (enable/disable interpolation)
     CBuilder& Color(std::string identifier, std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = 255, bool gradient = false)
     {
@@ -162,7 +168,7 @@ namespace FGUI
     };
 
     // @brief: set the default color of a widget (colorpicker/label)
-    // @params: std::uint8_t red = red color (0 - 255), std::uint8_t green = green color (0 - 255), 
+    // @params: std::uint8_t red = red color (0 - 255), std::uint8_t green = green color (0 - 255),
     // std::uint8_t blue = blue color (0 - 255), std::uint8_t alpha = color alpha (0 - 255)
     CBuilder& Color(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = 255)
     {
@@ -177,6 +183,24 @@ namespace FGUI
 
       return *this;
     };
+
+    // @brief: set the pixelation of the color pallet
+    // @params: unsigned int pixelation = pixelation amount
+    // @note: this is used as a form of optimization for the ColorList and ColorPicker.
+    // but it can be used as a form of customization as well.
+    CBuilder& Pixelation(unsigned int pixelation)
+    {
+      if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COLORLIST))
+      {
+        std::reinterpret_pointer_cast<FGUI::CColorList>(m_pTemporaryWidget)->SetPixelation(pixelation);
+      }
+      else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COLORPICKER))
+      {
+        std::reinterpret_pointer_cast<FGUI::CColorPicker>(m_pTemporaryWidget)->SetPixelation(pixelation);
+      }
+
+      return *this;
+    }
 
     // @brief: set the default key of a widget (keybinder and containers)
     // @params: unsigned int key = default key
@@ -306,10 +330,11 @@ namespace FGUI
       return *this;
     };
 
-    // @brief: set the style of a widget (label and textbox)
+    // @brief: set the style of a widget (label, textbox and tabs)
     // @params: int style
     // @note: style = label style (normal, colored and link - FGUI::LABEL_STYLE)
-    // style = textbox style (normal, password (hidden) and uppercase - FGUI::TEXTBOX_STYLE)
+    // style = textbox style (normal, uppercase and password (hidden) - FGUI::TEXTBOX_STYLE)
+    // style = tab style (horizontal and vertical - FGUI::TAB_STYLE)
     CBuilder& Style(int style)
     {
       if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::LABEL))
@@ -318,6 +343,11 @@ namespace FGUI
       }
       else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::TEXTBOX))
       {
+        std::reinterpret_pointer_cast<FGUI::CTextBox>(m_pTemporaryWidget)->SetStyle(static_cast<FGUI::TEXTBOX_STYLE>(style));
+      }
+      else if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::TABS))
+      {
+        std::reinterpret_pointer_cast<FGUI::CTabs>(m_pTemporaryWidget)->SetStyle(static_cast<FGUI::TAB_STYLE>(style));
       }
 
       return *this;
@@ -367,11 +397,11 @@ namespace FGUI
         std::reinterpret_pointer_cast<FGUI::CSlider>(m_pTemporaryWidget)->SetRange(min, max);
       }
 
-      return*this;
+      return *this;
     };
 
     // @brief: set the text length of textboxes
-    // @params: unsigned int length = text max length 
+    // @params: unsigned int length = text max length
     CBuilder& Length(unsigned int length)
     {
       if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::TEXTBOX))

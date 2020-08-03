@@ -14,6 +14,11 @@
 
 namespace FGUI
 {
+  using TEXTBOX_STYLE = enum struct ESTextBox_Style : int {
+    NORMAL = 1,
+    UPPERCASE,
+    PASSWORD
+  };
 
   class CTextBox : public FGUI::CWidgets
   {
@@ -31,6 +36,10 @@ namespace FGUI
     // @params: unsigned int length = text length (characters allowed)
     void SetLength(unsigned int length);
 
+    // @brief: set the textbox style (NORMAL = normal text; UPPERCASE = all text will be on uppercase; PASSWORD = all typed text will be replaced by a '*')
+    // @params: FGUI::TEXTBOX_STYLE style = textbox style (flag)
+    void SetStyle(FGUI::TEXTBOX_STYLE style);
+
     // @brief: populate widget geometry (draw widget)
     void Geometry() override;
 
@@ -41,16 +50,23 @@ namespace FGUI
     void Input() override;
 
     // @brief: save the widget state
-    // @params: nlohmann::json module = json module 
+    // @params: nlohmann::json module = json module
     void Save(nlohmann::json& module) override;
 
     // @brief: load the widget state
-    // @params: std::string file = file name/path to load
-    void Load(std::string file) override;
+    // @params: nlohmann::json module = json module
+    void Load(nlohmann::json& module) override;
+
+    // @brief: handle widget tooltips
+    void Tooltip() override;
+
   private:
+    int m_nStyle;
     std::string m_strCustomText;
-    int m_iLength;
+    unsigned int m_uiInputPos;
+    unsigned int m_uiLength;
     bool m_bIsGettingKey;
+    bool m_bIsTextSelected;
     FGUI::KEY_STRINGS m_ksStrings;
   };
 

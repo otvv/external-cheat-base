@@ -18,6 +18,7 @@ namespace FGUI
     m_iEntrySpacing = 20;
     m_prgpEntries = {};
     m_bIsOpened = false;
+    m_strTooltip = "";
     m_nType = static_cast<int>(WIDGET_TYPE::MULTIBOX);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::FOCUSABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -103,6 +104,9 @@ namespace FGUI
       strMultiString.assign("None");
     }
 
+    // clip widget area
+    FGUI::RENDER.LimitArea({ arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, m_dmSize.m_iHeight });
+
     // draw current selected entry
     FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, strMultiString);
 
@@ -135,22 +139,16 @@ namespace FGUI
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - 10) - 7, arWidgetRegion.m_iTop + ((arWidgetRegion.m_iBottom / 2) - 3) + 2, 6, 1, { 20, 20, 20 });
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - 10) - 6, arWidgetRegion.m_iTop + ((arWidgetRegion.m_iBottom / 2) - 3) + 3, 4, 1, { 20, 20, 20 });
     FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - 10) - 5, arWidgetRegion.m_iTop + ((arWidgetRegion.m_iBottom / 2) - 3) + 4, 2, 1, { 20, 20, 20 });
+
+    FGUI::RENDER.ResetLimit();
   }
 
   void CMultiBox::Update()
   {
     if (m_bIsOpened)
     {
-      FGUI::AREA arOpenedWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
-
       // keep widget focused
       std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
-
-      // close dropdown list if the user clicks on something else
-      if (!FGUI::INPUT.IsCursorInArea(arOpenedWidgetRegion) && FGUI::INPUT.GetKeyPress(MOUSE_1))
-      {
-        m_bIsOpened = false;
-      }
 
       m_dmSize.m_iHeight = m_iEntrySpacing + (m_prgpEntries.first.size() * m_iEntrySpacing) + 2;
     }
@@ -190,7 +188,7 @@ namespace FGUI
               // NOTE: maybe remove this?
               m_bIsOpened = false;
             }
-          } 
+          }
         }
       }
     }
@@ -214,19 +212,8 @@ namespace FGUI
     }
   }
 
-  void CMultiBox::Load(std::string file)
+  void CMultiBox::Load(nlohmann::json& module)
   {
-    nlohmann::json jsModule;
-
-    std::ifstream ifsFileToLoad(file, std::ifstream::binary);
-
-    if (ifsFileToLoad.fail())
-    {
-      return; // TODO: handle this properly
-    }
-
-    jsModule = nlohmann::json::parse(ifsFileToLoad);
-
     // remove spaces from widget name
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
@@ -238,7 +225,22 @@ namespace FGUI
       std::replace(strFormatedEntryName.begin(), strFormatedEntryName.end(), ' ', '_');
 
       // change widget state to the one stored on file
-      SetValue(i, jsModule[strFormatedWidgetName][strFormatedEntryName]);
+      SetValue(i, module[strFormatedWidgetName][strFormatedEntryName]);
+    }
+  }
+
+  void CMultiBox::Tooltip()
+  {
+    if (m_strTooltip.length() > 1 && !m_bIsOpened)
+    {
+      FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+
+      FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+
+      FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
+      FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
+      FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
+        arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
     }
   }
 

@@ -90,8 +90,10 @@ public:
     return buffer;
   }
 
-protected:
+public:
   void* m_pProcessHandle;
+private:
+
   HWND m_hWindowHandle;
   unsigned long m_ulProtect;
   unsigned long m_ulProtect2;

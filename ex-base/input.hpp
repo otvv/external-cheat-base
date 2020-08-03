@@ -10,11 +10,10 @@
 #include "FGUI/misc/definitions.hpp"
 #include "FGUI/misc/aliases.hpp"
 
-namespace INPUT
+namespace INPUT_SYSTEM
 {
   inline std::array<bool, 256> m_prgpCurrentPressedKeys, m_prgpOldPressedKeys;
   inline FGUI::POINT m_ptCursorPosition, m_ptCursorPositionDelta;
-  inline int m_iCursorWheelDelta;
 
   inline void PullInput()
   {
@@ -38,17 +37,17 @@ namespace INPUT
     ptLastKnownPosition = m_ptCursorPosition;
   }
 
-  inline bool GetKeyState(unsigned int _key_code)
+  inline bool IsKeyHeld(unsigned int _key_code)
   {
     return m_prgpCurrentPressedKeys.at(_key_code);
   }
 
-  inline bool GetKeyRelease(unsigned int _key_code)
+  inline bool IsKeyReleased(unsigned int _key_code)
   {
     return (!m_prgpCurrentPressedKeys.at(_key_code) && m_prgpOldPressedKeys.at(_key_code));
   }
 
-  inline bool GetKeyPress(unsigned int _key_code)
+  inline bool IsKeyPressed(unsigned int _key_code)
   {
     return (m_prgpCurrentPressedKeys.at(_key_code) && !m_prgpOldPressedKeys.at(_key_code));
   }
@@ -63,11 +62,6 @@ namespace INPUT
     return m_ptCursorPositionDelta;
   }
 
-  inline int GetCursorWheelDelta()
-  {
-    return m_iCursorWheelDelta;
-  }
-
   inline bool IsCursorInArea(FGUI::AREA area)
   {
     return (GetCursorPos().m_iX > area.m_iLeft && GetCursorPos().m_iY > area.m_iTop &&
@@ -76,13 +70,15 @@ namespace INPUT
 
   inline void OnEntryPoint()
   {
-    FGUI::INPUT.PullInput = INPUT::PullInput;
-    FGUI::INPUT.GetKeyState = INPUT::GetKeyState;
-    FGUI::INPUT.GetKeyRelease = INPUT::GetKeyRelease;
-    FGUI::INPUT.GetKeyPress = INPUT::GetKeyPress;
-    FGUI::INPUT.GetCursorPos = INPUT::GetCursorPos;
-    FGUI::INPUT.GetCursorPosDelta = INPUT::GetCursorPosDelta;
-    FGUI::INPUT.GetCursorWheelDelta = INPUT::GetCursorWheelDelta;
-    FGUI::INPUT.IsCursorInArea = INPUT::IsCursorInArea;
+    FGUI::INPUT.PullInput = INPUT_SYSTEM::PullInput;
+    FGUI::INPUT.IsKeyHeld = INPUT_SYSTEM::IsKeyHeld;
+    FGUI::INPUT.IsKeyReleased = INPUT_SYSTEM::IsKeyReleased;
+    FGUI::INPUT.IsKeyPressed = INPUT_SYSTEM::IsKeyPressed;
+    FGUI::INPUT.GetCursorPos = INPUT_SYSTEM::GetCursorPos;
+    FGUI::INPUT.GetCursorPosDelta = INPUT_SYSTEM::GetCursorPosDelta;
+    FGUI::INPUT.IsCursorInArea = INPUT_SYSTEM::IsCursorInArea;
+
+    // set default input type
+    FGUI::INPUT.SetInputType(FGUI::INPUT_TYPE::WIN_32);
   }
 }
