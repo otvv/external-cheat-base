@@ -104,7 +104,10 @@ namespace FGUI
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget state to the one stored on file
-    m_bIsChecked = module[strFormatedWidgetName];
+    if (module.contains(strFormatedWidgetName))
+    {
+      m_bIsChecked = module[strFormatedWidgetName];
+    }
   }
 
   void CCheckBox::Tooltip()

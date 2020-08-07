@@ -52,6 +52,32 @@ namespace FGUI
     // keybinder label
     FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
 
+    // change status 
+    // TODO: improve this (clean it up)
+    switch (FGUI::INPUT.GetInputType())
+    {
+      case static_cast<int>(INPUT_TYPE::WIN_32) :
+      {
+        m_strStatus = m_kcCodes.m_strVirtualKeyCodes[m_uiKey].data();
+        break;
+      }
+      case static_cast<int>(INPUT_TYPE::INPUT_SYSTEM) :
+      {
+        m_strStatus = m_kcCodes.m_strInputSystem[m_uiKey].data();
+        break;
+      }
+      case static_cast<int>(INPUT_TYPE::CUSTOM) :
+      {
+        m_strStatus = "NOT IMPLEMENTED";
+        break;
+      }
+      default:
+      {
+        throw std::exception("make sure to set an input type. Take a look at the wiki for more info.");
+        break;
+      }
+    }
+
     // keybinder current key
     FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strStatus);
   }
@@ -79,9 +105,6 @@ namespace FGUI
           }
           else // iterate the rest of the keys
           {
-            // set key
-            m_uiKey = key;
-
             // change status to currently pressed key
             switch (FGUI::INPUT.GetInputType())
             {
@@ -106,6 +129,9 @@ namespace FGUI
                 break;
               }
             }
+
+            // set key
+            m_uiKey = key;
 
             // block keybinder from receiving input
             m_bIsGettingKey = false;
@@ -141,7 +167,13 @@ namespace FGUI
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget default key to the one stored on file
-    m_uiKey = module[strFormatedWidgetName];
+    if (module.contains(strFormatedWidgetName))
+    {
+      m_uiKey = module[strFormatedWidgetName];
+      
+      // update widget status
+      m_strStatus = m_kcCodes.m_strVirtualKeyCodes[m_uiKey].data();
+    }
   }
 
   void CKeyBinder::Tooltip()

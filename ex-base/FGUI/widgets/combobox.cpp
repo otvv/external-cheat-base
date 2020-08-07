@@ -197,7 +197,10 @@ namespace FGUI
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget selected entry to the one stored on file
-    m_ullSelectedEntry = module[strFormatedWidgetName];
+    if (module.contains(strFormatedWidgetName))
+    {
+      m_ullSelectedEntry = module[strFormatedWidgetName];
+    }
   }
 
   void CComboBox::Tooltip()

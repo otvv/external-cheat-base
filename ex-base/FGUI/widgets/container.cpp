@@ -197,7 +197,6 @@ namespace FGUI
       // container body
       FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
       FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft + 1, arWidgetRegion.m_iTop + 31, arWidgetRegion.m_iRight - 2, (arWidgetRegion.m_iBottom - 30) - 2, { 245, 245, 245 });
-      FGUI::RENDER.Outline(arWidgetRegion.m_iLeft + 10, (arWidgetRegion.m_iTop + 31) + 20 + 25, arWidgetRegion.m_iRight - 20, (arWidgetRegion.m_iBottom - 31) - 60, { 195, 195, 195 });
 
       // container title
       FGUI::RENDER.Text(m_ptPosition.m_iX + 10, m_ptPosition.m_iY + 10, m_anyFont, { 255, 255, 255 }, m_strTitle);
@@ -237,11 +236,11 @@ namespace FGUI
         static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = { 8, 5 };
 
         // scrollbar thumb size
-        float flScrollbarThumbSize = (m_dmSize.m_iHeight / static_cast<float>(m_prgpWidgets.back()->GetPosition().m_iY)) * static_cast<float>((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight));
+        float flScrollbarThumbSize = ((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight) / static_cast<float>(m_prgpWidgets.back()->GetPosition().m_iY)) * static_cast<float>((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight));
 
         // calculate the scrollbar thumb position
-        float flScrollbarThumbPosition = (m_dmSize.m_iHeight - flScrollbarThumbSize) * static_cast<float>(m_iWidgetScrollOffset /
-          static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight) - (m_dmSize.m_iHeight - 5)));
+        float flScrollbarThumbPosition = ((m_dmSize.m_iHeight - 10) - flScrollbarThumbSize) * static_cast<float>(m_iWidgetScrollOffset /
+          static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight) - (m_dmSize.m_iHeight - 10)));
 
         // scrollbar body
         FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, { 235, 235, 235 });
@@ -251,7 +250,7 @@ namespace FGUI
       }
     }
 
-    // this will tell the form to skip focused widgets (so it can be drawned after all other widgets)
+    // this will tell the container to skip focused widgets (so it can be drawned after all other widgets)
     bool bSkipWidget = false;
 
     // this will hold the current skipped widget
@@ -321,15 +320,18 @@ namespace FGUI
       }
     }
 
-    if (GetParentWidget())
-    {
-      // groupbox label
-      FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle);
-    }
-
     if (m_bScrollBarState)
     {
       FGUI::RENDER.ResetLimit();
+    }
+
+    if (GetParentWidget())
+    {
+      // groupbox label
+      if (m_strTitle.length() > 0)
+      {
+        FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle);
+      }
     }
   }
 
@@ -406,11 +408,11 @@ namespace FGUI
         }
 
         // clamp scrolling
-        m_iWidgetScrollOffset = std::clamp(m_iWidgetScrollOffset, 0, std::max(0, ((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight)) - (m_dmSize.m_iHeight + 5)));
+        m_iWidgetScrollOffset = std::clamp(m_iWidgetScrollOffset, 0, std::max(0, ((m_prgpWidgets.back()->GetPosition().m_iY + (m_prgpWidgets.back()->GetSize().m_iHeight + 15))) - m_dmSize.m_iHeight));
       }
     }
 
-    // this will tell the form to skip focused widgets (so it can be drawned after all other widgets)
+    // this will tell the container to skip focused widgets (so it can be drawned after all other widgets)
     bool bSkipWidget = false;
 
     // this will hold the current skipped widget
@@ -422,7 +424,7 @@ namespace FGUI
       // check if the skipped widget can be used
       if (m_pFocusedWidget && m_pFocusedWidget->IsUnlocked())
       {
-        // tell the form to skip this widget
+        // tell the container to skip this widget
         bSkipWidget = true;
 
         // assign the widget that will be skipped

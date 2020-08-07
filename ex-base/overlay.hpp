@@ -40,8 +40,8 @@ namespace OVERLAY
     if (m_hwndTarget == GetForegroundWindow())
     {
     
-    // menu 
-    WIDGETS::Container->Render();
+      // menu 
+      WIDGETS::Container["$main"]->Render();
 
     }
 
@@ -127,7 +127,7 @@ namespace OVERLAY
     if (SUCCEEDED(RENDER::m_pObject->CreateDeviceEx(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hwndOverlay, D3DCREATE_HARDWARE_VERTEXPROCESSING, &RENDER::m_parParameters, 0, &RENDER::m_pDevice)))
     {
       // create fonts
-      RENDER::CreateFontA(FONTS::Title, "Tahoma", 12, 0x0, true);
+      RENDER::CreateFontA(FONTS::Watermark, "Tahoma", 12, RENDER::EFontFlags_t::ANTIALIAS, true);
 
       // initialize window
       WINDOW::OnSetupDevice();

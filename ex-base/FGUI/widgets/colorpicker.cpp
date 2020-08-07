@@ -10,7 +10,7 @@ namespace FGUI
 {
   CColorPicker::CColorPicker()
   {
-    m_strTitle = "ColorPicker";
+    m_strTitle = "";
     m_bIsOpened = false;
     m_dmSize = { 20, 16 };
     m_prRelativePos = { 5.f, 5.f };
@@ -108,9 +108,6 @@ namespace FGUI
 
     if (m_bIsOpened)
     {
-      // keep widget focused
-      std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
-
       FGUI::AREA arColorPickerRegion = { (GetAbsolutePosition().m_iX + 25), GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
       FGUI::AREA arColorHSBRegion = { arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom };
       FGUI::AREA arColorHueRegion = { (arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10, arColorPickerRegion.m_iTop, 10, arColorPickerRegion.m_iBottom };
@@ -154,6 +151,9 @@ namespace FGUI
 
         m_clrDefault.m_ucAlpha = std::clamp(flAlpha, 0.f, 255.f);
       }
+
+      // keep widget focused
+      std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
     }
   }
 
@@ -187,10 +187,13 @@ namespace FGUI
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget color to the one stored on file
-    m_clrDefault.m_ucRed = module[strFormatedWidgetName]["red"];
-    m_clrDefault.m_ucGreen = module[strFormatedWidgetName]["green"];
-    m_clrDefault.m_ucBlue = module[strFormatedWidgetName]["blue"];
-    m_clrDefault.m_ucAlpha = module[strFormatedWidgetName]["alpha"];
+    if (module.contains(strFormatedWidgetName))
+    {
+      m_clrDefault.m_ucRed = module[strFormatedWidgetName]["red"];
+      m_clrDefault.m_ucGreen = module[strFormatedWidgetName]["green"];
+      m_clrDefault.m_ucBlue = module[strFormatedWidgetName]["blue"];
+      m_clrDefault.m_ucAlpha = module[strFormatedWidgetName]["alpha"];
+    }
   }
 
   void CColorPicker::Tooltip()

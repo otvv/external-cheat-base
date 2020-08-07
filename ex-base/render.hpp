@@ -12,7 +12,7 @@
 
 namespace FONTS
 {
-  inline FGUI::FONT Title;
+  inline FGUI::FONT Watermark;
 }
 
 namespace RENDER

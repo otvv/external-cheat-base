@@ -462,16 +462,22 @@ namespace FGUI
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
-    for (std::size_t i = 0; i < m_prgpColorInfo.size(); i++)
+    if (module.contains(strFormatedWidgetName))
     {
-      // remove spaces from the color identificator
-      std::string strFormatedColorIdentificator = m_prgpColorInfo[i].m_strIdentificator;
-      std::replace(strFormatedColorIdentificator.begin(), strFormatedColorIdentificator.end(), ' ', '_');
+      for (std::size_t i = 0; i < m_prgpColorInfo.size(); i++)
+      {
+        // remove spaces from the color identificator
+        std::string strFormatedColorIdentificator = m_prgpColorInfo[i].m_strIdentificator;
+        std::replace(strFormatedColorIdentificator.begin(), strFormatedColorIdentificator.end(), ' ', '_');
 
-      m_prgpColorInfo[i].m_clrFirst.m_ucRed = module[strFormatedWidgetName][strFormatedColorIdentificator]["red"];
-      m_prgpColorInfo[i].m_clrFirst.m_ucGreen = module[strFormatedWidgetName][strFormatedColorIdentificator]["green"];
-      m_prgpColorInfo[i].m_clrFirst.m_ucBlue = module[strFormatedWidgetName][strFormatedColorIdentificator]["blue"];
-      m_prgpColorInfo[i].m_clrFirst.m_ucAlpha = module[strFormatedWidgetName][strFormatedColorIdentificator]["alpha"];
+        if (module.contains(strFormatedColorIdentificator))
+        {
+          m_prgpColorInfo[i].m_clrFirst.m_ucRed = module[strFormatedWidgetName][strFormatedColorIdentificator]["red"];
+          m_prgpColorInfo[i].m_clrFirst.m_ucGreen = module[strFormatedWidgetName][strFormatedColorIdentificator]["green"];
+          m_prgpColorInfo[i].m_clrFirst.m_ucBlue = module[strFormatedWidgetName][strFormatedColorIdentificator]["blue"];
+          m_prgpColorInfo[i].m_clrFirst.m_ucAlpha = module[strFormatedWidgetName][strFormatedColorIdentificator]["alpha"];
+        }
+      }
     }
   }
 

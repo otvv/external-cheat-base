@@ -218,14 +218,20 @@ namespace FGUI
     std::string strFormatedWidgetName = GetTitle();
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
-    for (std::size_t i = 0; i < m_prgpEntries.first.size(); i++)
+    if (module.contains(strFormatedWidgetName))
     {
-      // remove spaces from the entry name
-      std::string strFormatedEntryName = m_prgpEntries.first[i];
-      std::replace(strFormatedEntryName.begin(), strFormatedEntryName.end(), ' ', '_');
+      for (std::size_t i = 0; i < m_prgpEntries.first.size(); i++)
+      {
+        // remove spaces from the entry name
+        std::string strFormatedEntryName = m_prgpEntries.first[i];
+        std::replace(strFormatedEntryName.begin(), strFormatedEntryName.end(), ' ', '_');
 
-      // change widget state to the one stored on file
-      SetValue(i, module[strFormatedWidgetName][strFormatedEntryName]);
+        if (module.contains(strFormatedEntryName))
+        {
+          // change widget state to the one stored on file
+          SetValue(i, module[strFormatedWidgetName][strFormatedEntryName]);
+        }
+      }
     }
   }
 

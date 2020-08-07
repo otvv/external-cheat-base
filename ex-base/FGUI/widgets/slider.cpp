@@ -134,7 +134,10 @@ namespace FGUI
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget value to the one stored on file
-    m_flValue = module[strFormatedWidgetName];
+    if (module.contains(strFormatedWidgetName))
+    {
+      m_flValue = module[strFormatedWidgetName];
+    }
   }
 
   void CSlider::Tooltip()

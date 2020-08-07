@@ -267,7 +267,10 @@ namespace FGUI
     std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
     // change widget text to the one stored on file
-    m_strCustomText = module[strFormatedWidgetName];
+    if (module.contains(strFormatedWidgetName))
+    {
+      m_strCustomText = module[strFormatedWidgetName];
+    }
   }
 
   void CTextBox::Tooltip()
