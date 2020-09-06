@@ -4,6 +4,7 @@
 
 // library includes
 #include "container.hpp"
+#include "checkbox.hpp"
 
 namespace FGUI
 {
@@ -40,7 +41,7 @@ namespace FGUI
       if (GetState())
       {
         Update();
-        Geometry();
+        Geometry(FGUI::WIDGET_STATUS::NONE);
         Tooltip();
       }
     }
@@ -123,15 +124,23 @@ namespace FGUI
 
   void CContainer::SetFocusedWidget(std::shared_ptr<FGUI::CWidgets> widget)
   {
-    m_pFocusedWidget = widget;
-
     if (widget)
     {
-      m_bIsFocusingOnWidget = true;
+      m_pFocusedWidget = widget;
+
+      if (m_pFocusedWidget)
+      {
+        m_bIsFocusingOnWidget = true;
+      }
     }
     else
     {
-      m_bIsFocusingOnWidget = false;
+      m_pFocusedWidget.reset();
+
+      if (!m_pFocusedWidget)
+      {
+        m_bIsFocusingOnWidget = false;
+      }
     }
   }
 
@@ -157,10 +166,13 @@ namespace FGUI
 
   void CContainer::AddWidget(std::shared_ptr<FGUI::CWidgets> widget, bool padding)
   {
+    // set the parent widget
+    widget->SetParentWidget(shared_from_this());
+
     // configure padding
     if (padding)
     {
-      constexpr int iScrollBarWidth = 15;
+      static constexpr int iScrollBarWidth = 15;
 
       if (GetParentWidget())
       {
@@ -179,15 +191,13 @@ namespace FGUI
       }
     }
 
+    // pupulate container
     m_prgpWidgets.emplace_back(widget);
-
-    // set the parent widget
-    widget->SetParentWidget(shared_from_this());
   }
 
-  void CContainer::Geometry()
+  void CContainer::Geometry(FGUI::WIDGET_STATUS status)
   {
-    FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+    FGUI::AREA arWidgetRegion = {GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight};
 
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
@@ -195,11 +205,11 @@ namespace FGUI
     if (!GetParentWidget())
     {
       // container body
-      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
-      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft + 1, arWidgetRegion.m_iTop + 31, arWidgetRegion.m_iRight - 2, (arWidgetRegion.m_iBottom - 30) - 2, { 245, 245, 245 });
+      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, {45, 45, 45});
+      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft + 1, arWidgetRegion.m_iTop + 31, arWidgetRegion.m_iRight - 2, (arWidgetRegion.m_iBottom - 30) - 2, {245, 245, 245});
 
       // container title
-      FGUI::RENDER.Text(m_ptPosition.m_iX + 10, m_ptPosition.m_iY + 10, m_anyFont, { 255, 255, 255 }, m_strTitle);
+      FGUI::RENDER.Text(m_ptPosition.m_iX + 10, m_ptPosition.m_iY + 10, m_anyFont, {255, 255, 255}, m_strTitle);
 
       // if the container has a function
       if (m_fnctCallback)
@@ -213,40 +223,45 @@ namespace FGUI
       // groupbox body
       if (m_strTitle.length() > 0)
       {
-        FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, 5, 1, { 220, 220, 200 });                                                                                           // top1
-        FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + dmTitleTextSize.m_iWidth) + 10, arWidgetRegion.m_iTop, (arWidgetRegion.m_iRight - dmTitleTextSize.m_iWidth) - 10, 1, { 220, 220, 200 }); // top2
+        FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, 5, 1, {220, 220, 200});                                                                                           // top1
+        FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + dmTitleTextSize.m_iWidth) + 10, arWidgetRegion.m_iTop, (arWidgetRegion.m_iRight - dmTitleTextSize.m_iWidth) - 10, 1, {220, 220, 200}); // top2
       }
       else
       {
-        FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, 1, { 220, 220, 200 });                                                                     // top1
+        FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, 1, {220, 220, 200}); // top1
       }
 
-      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, 1, arWidgetRegion.m_iBottom, { 220, 220, 220 });                                                                      // left
-      FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight), arWidgetRegion.m_iTop, 1, arWidgetRegion.m_iBottom, { 220, 220, 220 });                                          // right
-      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + arWidgetRegion.m_iBottom), arWidgetRegion.m_iRight, 1, { 220, 220, 220 });                                          // bottom
-      FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), { 245, 245, 245 });                        // background
+      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, 1, arWidgetRegion.m_iBottom, {220, 220, 220});                                               // left
+      FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight), arWidgetRegion.m_iTop, 1, arWidgetRegion.m_iBottom, {220, 220, 220});                   // right
+      FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + arWidgetRegion.m_iBottom), arWidgetRegion.m_iRight, 1, {220, 220, 220});                   // bottom
+      FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), {245, 245, 245}); // background
+
+      // groupbox label
+      if (m_strTitle.length() > 0)
+      {
+        FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop - (dmTitleTextSize.m_iHeight / 2), m_anyFont, {35, 35, 35}, m_strTitle);
+      }
 
       if (m_bScrollBarState)
       {
-        // clip groupbox area
-        FGUI::RENDER.LimitArea({ arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom });
+        FGUI::AREA arScrollBarRegion = {(arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, m_dmSize.m_iHeight};
 
-        FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, m_dmSize.m_iHeight };
-
-        static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = { 8, 5 };
+        static constexpr FGUI::DIMENSION dmScrollBarThumbWidth = {8, 5};
 
         // scrollbar thumb size
-        float flScrollbarThumbSize = ((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight) / static_cast<float>(m_prgpWidgets.back()->GetPosition().m_iY)) * static_cast<float>((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight));
+        float flScrollbarThumbSize = ((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight) /
+                                      static_cast<float>(m_prgpWidgets.back()->GetPosition().m_iY)) *
+                                     static_cast<float>((m_dmSize.m_iHeight - m_prgpWidgets.back()->GetSize().m_iHeight));
 
         // calculate the scrollbar thumb position
         float flScrollbarThumbPosition = ((m_dmSize.m_iHeight - 10) - flScrollbarThumbSize) * static_cast<float>(m_iWidgetScrollOffset /
-          static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight) - (m_dmSize.m_iHeight - 10)));
+                                                                                                                 static_cast<float>((m_prgpWidgets.back()->GetPosition().m_iY + m_prgpWidgets.back()->GetSize().m_iHeight) - (m_dmSize.m_iHeight - 10)));
 
         // scrollbar body
-        FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, { 235, 235, 235 });
+        FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, {235, 235, 235});
 
         // scrollbar thumb
-        FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 4), (arScrollBarRegion.m_iTop + flScrollbarThumbPosition) + 5, dmScrollBarThumbWidth.m_iWidth, flScrollbarThumbSize, { 220, 223, 231 });
+        FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 4), (arScrollBarRegion.m_iTop + flScrollbarThumbPosition) + 5, dmScrollBarThumbWidth.m_iWidth, flScrollbarThumbSize, {220, 223, 231});
       }
     }
 
@@ -284,17 +299,32 @@ namespace FGUI
       // check if widgets are unlocked
       if (pWidgets && pWidgets->IsUnlocked() && pWidgets->GetFlags(WIDGET_FLAG::DRAWABLE))
       {
+        // tell if the widget is being hovered or not
+        FGUI::WIDGET_STATUS wsWidgetStatus = FGUI::WIDGET_STATUS::NONE;
+
+        FGUI::AREA arWidgetsRegion = {pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight};
+
         if (m_bScrollBarState)
         {
           // check if the widgets are inside the boundaries of the groupbox
-          if (((pWidgets->GetAbsolutePosition().m_iY <= GetAbsolutePosition().m_iY) + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY + (pWidgets->GetSize().m_iHeight >= GetAbsolutePosition().m_iY)))
+          if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
           {
-            pWidgets->Geometry();
+            if (FGUI::INPUT.IsCursorInArea(arWidgetsRegion) && !GetFocusedWidget())
+            {
+              wsWidgetStatus = FGUI::WIDGET_STATUS::HOVERED;
+            }
+
+            pWidgets->Geometry(wsWidgetStatus);
           }
         }
         else
         {
-          pWidgets->Geometry();
+          if (FGUI::INPUT.IsCursorInArea(arWidgetsRegion) && !GetFocusedWidget())
+          {
+            wsWidgetStatus = FGUI::WIDGET_STATUS::HOVERED;
+          }
+
+          pWidgets->Geometry(wsWidgetStatus);
         }
       }
     }
@@ -305,34 +335,37 @@ namespace FGUI
       // check if the skipped widget can be drawned
       if (pWidgetToSkip && pWidgetToSkip->IsUnlocked() && pWidgetToSkip->GetFlags(WIDGET_FLAG::DRAWABLE))
       {
+        // tell if the widget is being hovered or not
+        FGUI::WIDGET_STATUS wsSkippedWidgetStatus = FGUI::WIDGET_STATUS::NONE;
+
+        FGUI::AREA arSkippedWidgetRegion = {pWidgetToSkip->GetAbsolutePosition().m_iX, pWidgetToSkip->GetAbsolutePosition().m_iY, pWidgetToSkip->GetSize().m_iWidth, pWidgetToSkip->GetSize().m_iHeight};
+
         if (m_bScrollBarState)
         {
           // check if the widgets are inside the boundaries of the groupbox
-          if (((pWidgetToSkip->GetAbsolutePosition().m_iY <= GetAbsolutePosition().m_iY) + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY + (pWidgetToSkip->GetSize().m_iHeight >= GetAbsolutePosition().m_iY)))
+          if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
           {
-            pWidgetToSkip->Geometry();
+            if (FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion))
+            {
+              wsSkippedWidgetStatus = FGUI::WIDGET_STATUS::HOVERED;
+            }
+
+            pWidgetToSkip->Geometry(wsSkippedWidgetStatus);
           }
         }
         else
         {
-          pWidgetToSkip->Geometry();
+          if (FGUI::INPUT.IsCursorInArea(arSkippedWidgetRegion))
+          {
+            wsSkippedWidgetStatus = FGUI::WIDGET_STATUS::HOVERED;
+          }
+
+          pWidgetToSkip->Geometry(wsSkippedWidgetStatus);
         }
       }
     }
 
-    if (m_bScrollBarState)
-    {
-      FGUI::RENDER.ResetLimit();
-    }
-
-    if (GetParentWidget())
-    {
-      // groupbox label
-      if (m_strTitle.length() > 0)
-      {
-        FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle);
-      }
-    }
+    IGNORE_ARGS(status);
   }
 
   void CContainer::Update()
@@ -346,13 +379,13 @@ namespace FGUI
         SetSize(FGUI::RENDER.GetScreenSize());
       }
 
-      FGUI::AREA arDraggableArea = { m_ptPosition.m_iX, m_ptPosition.m_iY, m_dmSize.m_iWidth, 30 };
+      FGUI::AREA arDraggableArea = {m_ptPosition.m_iX, m_ptPosition.m_iY, m_dmSize.m_iWidth, 30};
 
       static bool bIsDraggingContainer = false;
 
       if (FGUI::INPUT.IsCursorInArea(arDraggableArea))
       {
-        if (FGUI::INPUT.IsKeyPressed(MOUSE_1))
+        if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
         {
           bIsDraggingContainer = true;
         }
@@ -366,6 +399,12 @@ namespace FGUI
         // move container
         m_ptPosition.m_iX += ptCursorPosDelta.m_iX;
         m_ptPosition.m_iY += ptCursorPosDelta.m_iY;
+
+        if (GetFlags(WIDGET_FLAG::LIMIT))
+        {
+          m_ptPosition.m_iX = std::clamp(m_ptPosition.m_iX, 0, (FGUI::RENDER.GetScreenSize().m_iWidth - m_dmSize.m_iWidth));
+          m_ptPosition.m_iY = std::clamp(m_ptPosition.m_iY, 0, (FGUI::RENDER.GetScreenSize().m_iHeight - m_dmSize.m_iHeight));
+        }
       }
 
       if (FGUI::INPUT.IsKeyReleased(MOUSE_1))
@@ -379,9 +418,8 @@ namespace FGUI
       {
         static bool bIsDraggingThumb = false;
 
-        FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
-
-        FGUI::AREA arScrollBarRegion = { (arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, arWidgetRegion.m_iBottom };
+        FGUI::AREA arWidgetRegion = {GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight};
+        FGUI::AREA arScrollBarRegion = {(arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - 15, arWidgetRegion.m_iTop, 15, arWidgetRegion.m_iBottom};
 
         if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
         {
@@ -395,13 +433,19 @@ namespace FGUI
         {
           FGUI::POINT ptCursorPosDelta = FGUI::INPUT.GetCursorPosDelta();
 
-          static constexpr int iLinesToScroll = 2;
+          static constexpr int iLinesToScroll = 2; // NOTE: feel free to change this
 
           if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
           {
             m_iWidgetScrollOffset += (ptCursorPosDelta.m_iY * iLinesToScroll);
           }
           else
+          {
+            bIsDraggingThumb = false;
+          }
+
+          // disable scrolling if a widget is being focused
+          if (GetFocusedWidget())
           {
             bIsDraggingThumb = false;
           }
@@ -430,11 +474,11 @@ namespace FGUI
         // assign the widget that will be skipped
         pWidgetToSkip = m_pFocusedWidget;
 
-        FGUI::AREA arSkippedWidgetRegion = { pWidgetToSkip->GetAbsolutePosition().m_iX, pWidgetToSkip->GetAbsolutePosition().m_iY, pWidgetToSkip->GetSize().m_iWidth, pWidgetToSkip->GetSize().m_iHeight };
+        FGUI::AREA arSkippedWidgetRegion = {pWidgetToSkip->GetAbsolutePosition().m_iX, pWidgetToSkip->GetAbsolutePosition().m_iY, pWidgetToSkip->GetSize().m_iWidth, pWidgetToSkip->GetSize().m_iHeight};
 
         if (m_bScrollBarState)
         {
-          if (((pWidgetToSkip->GetAbsolutePosition().m_iY <= GetAbsolutePosition().m_iY) + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY + (pWidgetToSkip->GetSize().m_iHeight >= GetAbsolutePosition().m_iY)))
+          if ((pWidgetToSkip->GetAbsolutePosition().m_iY + pWidgetToSkip->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgetToSkip->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
           {
             pWidgetToSkip->Update();
 
@@ -460,7 +504,7 @@ namespace FGUI
           {
             pWidgetToSkip->Input();
 
-            // loose unfocus
+            // unfocus widget
             SetFocusedWidget(nullptr);
 
             // reset focused widget state
@@ -485,13 +529,26 @@ namespace FGUI
           }
         }
 
-        FGUI::AREA arWidgetRegion = { pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight };
+        FGUI::AREA arWidgetRegion;
 
         if (m_bScrollBarState)
         {
-          if (((pWidgets->GetAbsolutePosition().m_iY <= GetAbsolutePosition().m_iY) + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY + (pWidgets->GetSize().m_iHeight >= GetAbsolutePosition().m_iY)))
+          if ((pWidgets->GetAbsolutePosition().m_iY + pWidgets->GetSize().m_iHeight) <= (GetAbsolutePosition().m_iY + GetSize().m_iHeight) && (pWidgets->GetAbsolutePosition().m_iY >= GetAbsolutePosition().m_iY))
           {
             pWidgets->Update();
+
+            // if the widget is a CheckBox allow input if the user clicks on its title
+            if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::CHECKBOX))
+            {
+              // get the text size of the CheckBox title
+              FGUI::DIMENSION dmCheckBoxTitleTextSize = FGUI::RENDER.GetTextSize(pWidgets->GetFont(), pWidgets->GetTitle());
+
+              arWidgetRegion = {pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, (pWidgets->GetSize().m_iWidth + dmCheckBoxTitleTextSize.m_iWidth) + 5, pWidgets->GetSize().m_iHeight};
+            }
+            else
+            {
+              arWidgetRegion = {pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight};
+            }
 
             // check if the widget can be clicked
             if (pWidgets->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arWidgetRegion) && FGUI::INPUT.IsKeyPressed(MOUSE_1) && !bSkipWidget)
@@ -512,6 +569,19 @@ namespace FGUI
         else
         {
           pWidgets->Update();
+
+          // if the widget is a CheckBox allow input if the user clicks on its title
+          if (pWidgets->GetType() == static_cast<int>(WIDGET_TYPE::CHECKBOX))
+          {
+            // get the text size of the CheckBox title
+            FGUI::DIMENSION dmCheckBoxTitleTextSize = FGUI::RENDER.GetTextSize(pWidgets->GetFont(), pWidgets->GetTitle());
+
+            arWidgetRegion = {pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, (pWidgets->GetSize().m_iWidth + dmCheckBoxTitleTextSize.m_iWidth) + 5, pWidgets->GetSize().m_iHeight};
+          }
+          else
+          {
+            arWidgetRegion = {pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight};
+          }
 
           // check if the widget can be clicked
           if (pWidgets->GetFlags(WIDGET_FLAG::CLICKABLE) && FGUI::INPUT.IsCursorInArea(arWidgetRegion) && FGUI::INPUT.IsKeyPressed(MOUSE_1) && !bSkipWidget)
@@ -536,7 +606,7 @@ namespace FGUI
   {
   }
 
-  void CContainer::Save(nlohmann::json& module)
+  void CContainer::Save(nlohmann::json &module)
   {
     if (m_prgpWidgets.empty())
     {
@@ -556,7 +626,7 @@ namespace FGUI
     }
   }
 
-  void CContainer::Load(nlohmann::json& module)
+  void CContainer::Load(nlohmann::json &module)
   {
     if (m_prgpWidgets.empty())
     {
@@ -586,7 +656,7 @@ namespace FGUI
         // avoid drawing tooltips when a widget is being focused
         if (!std::reinterpret_pointer_cast<FGUI::CContainer>(pWidgets->GetParentWidget())->GetFocusedWidget())
         {
-          FGUI::AREA arWidgetRegion = { pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight };
+          FGUI::AREA arWidgetRegion = {pWidgets->GetAbsolutePosition().m_iX, pWidgets->GetAbsolutePosition().m_iY, pWidgets->GetSize().m_iWidth, pWidgets->GetSize().m_iHeight};
 
           if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
           {

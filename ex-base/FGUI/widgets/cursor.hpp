@@ -2,32 +2,38 @@
 // FGUI - feature rich graphical user interface
 //
 
-#ifndef FGUI_COLORPICKER_HH
-#define FGUI_COLORPICKER_HH
+#ifndef FGUI_CURSOR_HH
+#define FGUI_CURSOR_HH
+
+// includes
+#include <functional>
 
 // library includes
 #include "widgets.hpp"
 
 namespace FGUI
 {
-  class CColorPicker : public FGUI::CWidgets
+  using CURSOR_STYLE = enum struct ESCursorStyle : int {
+    NONE = 0,
+    ARROW,
+    HAND,
+    IBEAM,
+    PIPETTE,
+    MOVE
+  };
+
+  class CCursor : public FGUI::CWidgets
   {
   public:
-    CColorPicker();
+    CCursor();
 
-    // @brief: sets the default color
-    // @args: FGUI::COLOR color = default color
+    // @brief: set the cursor style
+    // @args: FGUI::CURSOR_STYLE style = cursor style (type)
+    void SetStyle(FGUI::CURSOR_STYLE style);
+
+    // @brief: set the cursor color
+    // @args: FGUI::COLOR color = cursor custom color
     void SetColor(FGUI::COLOR color);
-
-    // @brief: returns the current color
-    FGUI::COLOR GetColor();
-
-    // @brief: set the pixelation of the color picker
-    // @args: unsigned int pixelation = pixelation amount
-    void SetPixelation(unsigned int pixelation);
-
-    // @brief: returns the current pixelation of the color picker
-    unsigned int GetPixelation();
 
     // @brief: populate widget geometry (draw widget)
     // @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
@@ -51,12 +57,9 @@ namespace FGUI
     void Tooltip() override;
 
   private:
-    FGUI::COLOR m_clrDefault;
-    unsigned int m_uiPixelation;
-    bool m_bIsOpened;
-    FGUI::PRECISION m_prRelativePos;
+    FGUI::COLOR m_clrCursor;
+    int m_nStyle;
   };
-
 } // namespace FGUI
 
-#endif // FGUI_COLORPICKER_HH
+#endif // FGUI_CURSOR_HH

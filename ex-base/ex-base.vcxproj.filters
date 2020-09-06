@@ -10,9 +10,6 @@
     <ClCompile Include="FGUI\widgets\checkbox.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="FGUI\widgets\colorlist.cpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="FGUI\widgets\colorpicker.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
@@ -37,13 +34,19 @@
     <ClCompile Include="FGUI\widgets\slider.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="FGUI\widgets\tabs.cpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="FGUI\widgets\textbox.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
     <ClCompile Include="FGUI\widgets\widgets.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\itemselector.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\tabpanel.cpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FGUI\widgets\cursor.cpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,25 +78,13 @@
     <ClInclude Include="FGUI\dependencies\external\json.hpp">
       <Filter>ex-client\FGUI\dependencies\external</Filter>
     </ClInclude>
-    <ClInclude Include="FGUI\misc\aliases.hpp">
-      <Filter>ex-client\FGUI\misc</Filter>
-    </ClInclude>
     <ClInclude Include="FGUI\misc\builder.hpp">
-      <Filter>ex-client\FGUI\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\misc\definitions.hpp">
-      <Filter>ex-client\FGUI\misc</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\misc\helpers.hpp">
       <Filter>ex-client\FGUI\misc</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\widgets\button.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\widgets\checkbox.hpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="FGUI\widgets\colorlist.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
     <ClInclude Include="FGUI\widgets\colorpicker.hpp">
@@ -120,9 +111,6 @@
     <ClInclude Include="FGUI\widgets\slider.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="FGUI\widgets\tabs.hpp">
-      <Filter>ex-client\FGUI\widgets</Filter>
-    </ClInclude>
     <ClInclude Include="FGUI\widgets\textbox.hpp">
       <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
@@ -131,6 +119,24 @@
     </ClInclude>
     <ClInclude Include="FGUI\FGUI.hpp">
       <Filter>ex-client\FGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\itemselector.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\tabpanel.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\internal\aliases.hpp">
+      <Filter>ex-client\FGUI\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\internal\definitions.hpp">
+      <Filter>ex-client\FGUI\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\internal\helpers.hpp">
+      <Filter>ex-client\FGUI\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="FGUI\widgets\cursor.hpp">
+      <Filter>ex-client\FGUI\widgets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +175,9 @@
     </Filter>
     <Filter Include="ex-client\FGUI\misc">
       <UniqueIdentifier>{a7341c29-4c98-44de-b7a8-103d0e667f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex-client\FGUI\internal">
+      <UniqueIdentifier>{f89fbc44-c2c9-4b3f-8a84-4e77f588b20b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

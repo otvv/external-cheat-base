@@ -39,10 +39,8 @@ namespace OVERLAY
 
     if (m_hwndTarget == GetForegroundWindow())
     {
-    
       // menu 
-      WIDGETS::Container["$main"]->Render();
-
+      Widgets::Container->Render();
     }
 
     RENDER::m_pDevice->EndScene();

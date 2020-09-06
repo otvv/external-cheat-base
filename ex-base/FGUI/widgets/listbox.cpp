@@ -4,6 +4,7 @@
 
 // library includes
 #include "listbox.hpp"
+#include "container.hpp"
 
 namespace FGUI
 {
@@ -13,6 +14,7 @@ namespace FGUI
     m_strTitle = "ListBox";
     m_anyFont = 0;
     m_iEntrySpacing = 20;
+    m_dmSize = {250, 300};
     m_ullSelectedEntry = 0;
     m_iScrollThumbPosition = 0;
     m_fnctCallback = nullptr;
@@ -49,7 +51,7 @@ namespace FGUI
     m_fnctCallback = callback;
   }
 
-  void CListBox::Geometry()
+  void CListBox::Geometry(FGUI::WIDGET_STATUS status)
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
@@ -130,6 +132,8 @@ namespace FGUI
     {
       FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 4), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 5, dmScrollBarThumbWidth.m_iWidth, flCalculatedSize, { 220, 223, 231 });
     }
+    
+    IGNORE_ARGS(status);
   }
 
   void CListBox::Update()
@@ -172,6 +176,12 @@ namespace FGUI
       {
         m_bIsDraggingThumb = false;
       }
+    }
+
+    // stop scrolling if another widget is being focused
+    if (std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->GetFocusedWidget())
+    {
+      m_bIsDraggingThumb = false;
     }
   }
 
@@ -254,5 +264,4 @@ namespace FGUI
         arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
     }
   }
-
 } // namespace FGUI

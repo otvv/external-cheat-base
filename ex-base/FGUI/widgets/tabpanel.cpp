@@ -3,60 +3,61 @@
 //
 
 // library includes
-#include "tabs.hpp"
+#include "tabpanel.hpp"
+#include "container.hpp"
 
 namespace FGUI
 {
 
-  CTabs::CTabs()
+  CTabPanel::CTabPanel()
   {
-    m_strTitle = "Tabs";
+    m_strTitle = "TabsPanel";
     m_anyFont = 0;
     m_ullSelectedEntry = 0;
     m_dmSize = { 110, 25 };
-    m_prgpTabs = {};
+    m_prgpTabButtons = {};
     m_strTooltip = "";
     m_nStyle = static_cast<int>(TAB_STYLE::HORIZONTAL);
-    m_nType = static_cast<int>(WIDGET_TYPE::TABS);
+    m_nType = static_cast<int>(WIDGET_TYPE::TABPANEL);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE);
   }
 
-  void CTabs::AddTab(std::string title)
+  void CTabPanel::AddTab(std::string title)
   {
-    m_prgpTabs.emplace_back(title);
+    m_prgpTabButtons.emplace_back(title);
   }
 
-  void CTabs::SetIndex(std::size_t index)
+  void CTabPanel::SetIndex(std::size_t index)
   {
     m_ullSelectedEntry = index;
   }
 
-  std::size_t CTabs::GetIndex()
+  std::size_t CTabPanel::GetIndex()
   {
     return m_ullSelectedEntry;
   }
 
-  void CTabs::SetStyle(FGUI::TAB_STYLE style)
+  void CTabPanel::SetStyle(FGUI::TAB_STYLE style)
   {
     m_nStyle = static_cast<int>(style);
   }
 
-  int CTabs::GetStyle()
+  int CTabPanel::GetStyle()
   {
     return m_nStyle;
   }
 
-  void CTabs::Geometry()
+  void CTabPanel::Geometry(FGUI::WIDGET_STATUS status)
   {
     // don't proceed if the tab container is empty
-    if (m_prgpTabs.empty())
+    if (m_prgpTabButtons.empty())
     {
       return;
     }
 
-    FGUI::AREA arWidgetRegion = { 0, 0, 0 };
+    FGUI::AREA arWidgetRegion = { 0, 0, 0, 0 };
 
-    for (std::size_t i = 0; i < m_prgpTabs.size(); i++)
+    for (std::size_t i = 0; i < m_prgpTabButtons.size(); i++)
     {
       if (m_nStyle == static_cast<int>(TAB_STYLE::HORIZONTAL))
       {
@@ -67,12 +68,12 @@ namespace FGUI
         if (m_ullSelectedEntry == i)
         {
           FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - 5), arWidgetRegion.m_iRight, (arWidgetRegion.m_iBottom + 5), { 45, 45, 45 });
-          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabs[i]);
+          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
         }
         else
         {
           FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
-          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabs[i]);
+          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
         }
       }
       else if (m_nStyle == static_cast<int>(TAB_STYLE::VERTICAL))
@@ -84,22 +85,24 @@ namespace FGUI
         if (m_ullSelectedEntry == i)
         {
           FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, (arWidgetRegion.m_iRight + 5), arWidgetRegion.m_iBottom, { 45, 45, 45 });
-          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabs[i]);
+          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
         }
         else
         {
           FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 45, 45, 45 });
-          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabs[i]);
+          FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 20), (arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - 5), m_anyFont, { 255, 255, 255 }, m_prgpTabButtons[i]);
         }
       }
     }
+
+    IGNORE_ARGS(status);
   }
 
-  void CTabs::Update()
+  void CTabPanel::Update()
   {
-    FGUI::AREA arWidgetRegion = { 0, 0, 0 };
+    FGUI::AREA arWidgetRegion = { 0, 0, 0, 0 };
 
-    for (std::size_t i = 0; i < m_prgpTabs.size(); i++)
+    for (std::size_t i = 0; i < m_prgpTabButtons.size(); i++)
     {
       if (m_nStyle == static_cast<int>(TAB_STYLE::HORIZONTAL))
       {
@@ -119,26 +122,32 @@ namespace FGUI
         if (FGUI::INPUT.IsKeyPressed(MOUSE_1))
         {
           m_ullSelectedEntry = i;
+
+          // loose focus if another tab is selected
+          if (m_ullSelectedEntry != i)
+          { 
+            std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(nullptr);
+          }
         }
       }
     }
   }
 
-  void CTabs::Input()
+  void CTabPanel::Input()
   {
   }
 
-  void CTabs::Save(nlohmann::json& module)
+  void CTabPanel::Save(nlohmann::json& module)
   {
-    IGNORE_ARG(module);
+    IGNORE_ARGS(module);
   }
 
-  void CTabs::Load(nlohmann::json& module)
+  void CTabPanel::Load(nlohmann::json& module)
   {
-    IGNORE_ARG(module);
+    IGNORE_ARGS(module);
   }
 
-  void CTabs::Tooltip()
+  void CTabPanel::Tooltip()
   {
   }
 

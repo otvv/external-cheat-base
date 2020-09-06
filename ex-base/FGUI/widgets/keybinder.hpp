@@ -11,20 +11,32 @@
 namespace FGUI
 {
 
+  using INPUT_STATE = enum struct ESInputState_t : int
+  {
+    ON_CLICK = 0,
+    ON_HOLD = 1,
+    ON_TOGGLE = 2
+  };
+
   class CKeyBinder : public FGUI::CWidgets
   {
   public:
     CKeyBinder();
 
     // @brief: set a custom key for the keybinder
-    // @params: unsigned int key = custom key code
+    // @args: unsigned int key = custom key code
     void SetKey(unsigned int key_code);
 
     // @brief: get the current key set on the keybinder
-    unsigned int GetKey();
+    bool GetKey();
+
+    // @brief: set the keybinder input state (ON_CLICK, ON_HOLD, ON_TOGGLE)
+    // @args: FGUI::INPUT_STATE state = key state
+    void SetState(FGUI::INPUT_STATE state);
 
     // @brief: populate widget geometry (draw widget)
-    void Geometry() override;
+    // @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
+    void Geometry(FGUI::WIDGET_STATUS status) override;
 
     // @brief: handle update operations on the widget
     void Update() override;
@@ -33,17 +45,18 @@ namespace FGUI
     void Input() override;
 
     // @brief: save the widget state
-    // @params: nlohmann::json module = json module
+    // @args: nlohmann::json module = json module
     void Save(nlohmann::json& module) override;
 
     // @brief: load the widget state
-    // @params: nlohmann::json module = json module
+    // @args: nlohmann::json module = json module
     void Load(nlohmann::json& module) override;
 
     // @brief: handle widget tooltips
     void Tooltip() override;
-
+    
   private:
+    int m_nState;
     unsigned int m_uiKey;
     std::string m_strStatus;
     bool m_bIsGettingKey;

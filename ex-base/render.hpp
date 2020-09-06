@@ -7,8 +7,8 @@
 
 #include <string>
 
-#include "FGUI/misc/definitions.hpp"
-#include "FGUI/misc/aliases.hpp"
+#include "FGUI/internal/definitions.hpp"
+#include "FGUI/internal/aliases.hpp"
 
 namespace FONTS
 {
@@ -177,8 +177,6 @@ namespace RENDER
     FGUI::RENDER.CreateFont = RENDER::CreateFont;
     FGUI::RENDER.GetScreenSize = RENDER::GetScreenSize;
     FGUI::RENDER.GetTextSize = RENDER::GetTextSize;
-    FGUI::RENDER.LimitArea = RENDER::LimitArea;
-    FGUI::RENDER.ResetLimit = RENDER::ResetLimit;
     FGUI::RENDER.Rectangle = RENDER::Rectangle;
     FGUI::RENDER.Outline = RENDER::Outline;
     FGUI::RENDER.Line = RENDER::Line;

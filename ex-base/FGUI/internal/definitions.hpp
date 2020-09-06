@@ -238,16 +238,17 @@ namespace FGUI
   using WIDGET_TYPE = enum struct ESWidgetType_t : int {
     BUTTON = 0,
     CHECKBOX,
-    COLORLIST,
     COLORPICKER,
     COMBOBOX,
     CONTAINER,
+    CURSOR,
+    ITEMSELECTOR,
     KEYBINDER,
     LABEL,
     LISTBOX,
     MULTIBOX,
     SLIDER,
-    TABS,
+    TABPANEL,
     TEXTBOX
   };
 
@@ -256,9 +257,14 @@ namespace FGUI
     CLICKABLE = 0x2,
     SAVABLE = 0x4,
     FOCUSABLE = 0x8,
-    RESIZABLE = 0x10,
 
-    FULLSCREEN = 0x20 // this is exclusively for containers
+    FULLSCREEN = 0x10, // this is exclusively for window Containers
+    LIMIT = 0x20, // this is exclusively for window Containers
+  };
+
+  using WIDGET_STATUS = enum struct ESWidgetState_t : int {
+    NONE = 0,
+    HOVERED
   };
 
 } // namespace FGUI

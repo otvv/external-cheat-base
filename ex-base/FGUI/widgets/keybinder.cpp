@@ -4,6 +4,7 @@
 
 // library includes
 #include "keybinder.hpp"
+#include "container.hpp"
 
 namespace FGUI
 {
@@ -17,6 +18,7 @@ namespace FGUI
     m_strStatus = "None";
     m_bIsGettingKey = false;
     m_strTooltip = "";
+    m_nState = static_cast<int>(INPUT_STATE::ON_HOLD);
     m_nType = static_cast<int>(WIDGET_TYPE::KEYBINDER);
     m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
   }
@@ -26,19 +28,50 @@ namespace FGUI
     m_uiKey = key_code;
   }
 
-  unsigned int CKeyBinder::GetKey()
+  bool CKeyBinder::GetKey()
   {
-    return m_uiKey;
+    if (m_nState == static_cast<int>(FGUI::INPUT_STATE::ON_HOLD))
+    {
+      if (FGUI::INPUT.IsKeyHeld(m_uiKey))
+      {
+        return true;
+      }
+    }
+    else if (m_nState == static_cast<int>(FGUI::INPUT_STATE::ON_CLICK))
+    {
+      if (FGUI::INPUT.IsKeyPressed(m_uiKey))
+      {
+        return true;
+      }
+    }
+    else if (m_nState == static_cast<int>(FGUI::INPUT_STATE::ON_TOGGLE))
+    {
+      static bool bSwitch = false;
+
+      if (FGUI::INPUT.IsKeyPressed(m_uiKey))
+      {
+        bSwitch = !bSwitch;
+
+        return bSwitch;
+      }
+    }
+
+    return false;
   }
 
-  void CKeyBinder::Geometry()
+  void CKeyBinder::SetState(FGUI::INPUT_STATE state)
+  {
+    m_nState = static_cast<int>(state);
+  }
+
+  void CKeyBinder::Geometry(FGUI::WIDGET_STATUS status)
   {
     FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
     FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
     // keybinder body
-    if (FGUI::INPUT.IsCursorInArea(arWidgetRegion) || m_bIsGettingKey)
+    if (status == FGUI::WIDGET_STATUS::HOVERED || m_bIsGettingKey)
     {
       FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 195, 195, 195 });
       FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), { 255, 255, 235 });
@@ -73,7 +106,7 @@ namespace FGUI
       }
       default:
       {
-        throw std::exception("make sure to set an input type. Take a look at the wiki for more info.");
+        std::throw_with_nested(std::runtime_error("make sure to set an input type. Take a look at the wiki for more info."));
         break;
       }
     }
@@ -125,7 +158,7 @@ namespace FGUI
               }
               default:
               {
-                throw std::exception("make sure to set an input type. Take a look at the wiki for more info.");
+                std::throw_with_nested(std::runtime_error("make sure to set an input type. Take a look at the wiki for more info."));
                 break;
               }
             }
@@ -139,16 +172,17 @@ namespace FGUI
         }
       }
     }
+    
+    // stop receiving input if another widget is being focused
+    if (std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->GetFocusedWidget())
+    {
+      m_bIsGettingKey = false;
+    }
   }
 
   void CKeyBinder::Input()
   {
-    FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
-
-    if (FGUI::INPUT.IsCursorInArea(arWidgetRegion))
-    {
-      m_bIsGettingKey = !m_bIsGettingKey;
-    }
+    m_bIsGettingKey = !m_bIsGettingKey;
   }
 
   void CKeyBinder::Save(nlohmann::json& module)
